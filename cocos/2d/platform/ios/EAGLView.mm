@@ -394,89 +394,89 @@ static CCEAGLView *__view = 0;
 
 // Pass the touches to the superview
 #pragma mark CCEAGLView - Touch Delegate
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (isKeyboardShown_)
-    {
-        [self handleTouchesAfterKeyboardShow];
-        return;
-    }
-    
-    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
-    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    
-    int i = 0;
-    for (UITouch *touch in touches) {
-        ids[i] = touch;
-        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
-        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
-        ++i;
-    }
-    cocos2d::EGLView::getInstance()->handleTouchesBegin(i, (int*)ids, xs, ys);
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (isKeyboardShown_)
-    {
-        return;
-    }
-    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
-    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    
-    int i = 0;
-    for (UITouch *touch in touches) {
-        ids[i] = touch;
-        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
-        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
-        ++i;
-    }
-    cocos2d::EGLView::getInstance()->handleTouchesMove(i, (int*)ids, xs, ys);
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (isKeyboardShown_)
-    {
-        return;
-    }
-    
-    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
-    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    
-    int i = 0;
-    for (UITouch *touch in touches) {
-        ids[i] = touch;
-        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
-        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
-        ++i;
-    }
-    cocos2d::EGLView::getInstance()->handleTouchesEnd(i, (int*)ids, xs, ys);
-}
-    
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (isKeyboardShown_)
-    {
-        return;
-    }
-    
-    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
-    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
-    
-    int i = 0;
-    for (UITouch *touch in touches) {
-        ids[i] = touch;
-        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
-        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
-        ++i;
-    }
-    cocos2d::EGLView::getInstance()->handleTouchesCancel(i, (int*)ids, xs, ys);
-}
+//- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    if (isKeyboardShown_)
+//    {
+//        [self handleTouchesAfterKeyboardShow];
+//        return;
+//    }
+//    
+//    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+//    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    
+//    int i = 0;
+//    for (UITouch *touch in touches) {
+//        ids[i] = touch;
+//        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
+//        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
+//        ++i;
+//    }
+//    cocos2d::EGLView::getInstance()->handleTouchesBegin(i, (int*)ids, xs, ys);
+//}
+//
+//- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    if (isKeyboardShown_)
+//    {
+//        return;
+//    }
+//    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+//    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    
+//    int i = 0;
+//    for (UITouch *touch in touches) {
+//        ids[i] = touch;
+//        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
+//        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
+//        ++i;
+//    }
+//    cocos2d::EGLView::getInstance()->handleTouchesMove(i, (int*)ids, xs, ys);
+//}
+//
+//- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    if (isKeyboardShown_)
+//    {
+//        return;
+//    }
+//    
+//    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+//    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    
+//    int i = 0;
+//    for (UITouch *touch in touches) {
+//        ids[i] = touch;
+//        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
+//        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
+//        ++i;
+//    }
+//    cocos2d::EGLView::getInstance()->handleTouchesEnd(i, (int*)ids, xs, ys);
+//}
+//    
+//- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    if (isKeyboardShown_)
+//    {
+//        return;
+//    }
+//    
+//    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+//    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+//    
+//    int i = 0;
+//    for (UITouch *touch in touches) {
+//        ids[i] = touch;
+//        xs[i] = [touch locationInView: [touch view]].x * __view.contentScaleFactor;;
+//        ys[i] = [touch locationInView: [touch view]].y * __view.contentScaleFactor;;
+//        ++i;
+//    }
+//    cocos2d::EGLView::getInstance()->handleTouchesCancel(i, (int*)ids, xs, ys);
+//}
 
 #pragma mark - UIView - Responder
 
