@@ -126,6 +126,10 @@ static CCAccelerometerDispatcher* s_pAccelerometerDispatcher;
             _acceleration->y = -tmp;
             break;
             
+        case UIInterfaceOrientationUnknown:
+            // don't do anything
+            break;
+            
         case UIInterfaceOrientationPortrait:
             break;
     }
