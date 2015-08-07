@@ -212,6 +212,45 @@ void GLViewImpl::setIMEKeyboardState(bool open)
     }
 }
 
+void GLViewImpl::setIMEKeyboardInputMode(KeyboardInputMode mode)
+{
+    CCEAGLView *eaglview = (CCEAGLView*) _eaglview;
+    switch (mode)
+    {
+        case KeyboardInputMode::EMAIL_ADDRESS:
+            eaglview.keyboardType = UIKeyboardTypeEmailAddress;
+            break;
+        case KeyboardInputMode::NUMERIC:
+            eaglview.keyboardType = UIKeyboardTypeDecimalPad;
+            break;
+        case KeyboardInputMode::ASCII:
+            eaglview.keyboardType = UIKeyboardTypeASCIICapable;
+            break;
+        case KeyboardInputMode::PHONE_NUMBER:
+            eaglview.keyboardType = UIKeyboardTypePhonePad;
+            break;
+        case KeyboardInputMode::URL:
+            eaglview.keyboardType = UIKeyboardTypeURL;
+            break;
+        case KeyboardInputMode::DECIMAL:
+            eaglview.keyboardType = UIKeyboardTypeDecimalPad;
+            break;
+        case KeyboardInputMode::SINGLE_LINE:
+            eaglview.keyboardType = UIKeyboardTypeDefault;
+            break;
+        default:
+            eaglview.keyboardType = UIKeyboardTypeDefault;
+            break;
+    }
+}
+
+void GLViewImpl::setIMEKeyboardSpellChecking(bool enable)
+{
+    CCEAGLView *eaglview = (CCEAGLView*) _eaglview;
+
+    eaglview.spellCheckingType = enable ? UITextSpellCheckingTypeYes : UITextSpellCheckingTypeNo;
+}
+
 NS_CC_END
 
 #endif // CC_PLATFOR_IOS

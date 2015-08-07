@@ -74,6 +74,51 @@ struct GLContextAttrs
     int stencilBits;
 };
 
+enum class KeyboardInputMode
+{
+    /**
+     * The user is allowed to enter any text, including line breaks.
+     */
+    ANY,
+    
+    /**
+     * The user is allowed to enter an e-mail address.
+     */
+    EMAIL_ADDRESS,
+    
+    /**
+     * The user is allowed to enter an integer value.
+     */
+    NUMERIC,
+    
+    /**
+     * The user is allowed to enter ascii characters (alphabet + numbers + symbols).
+     */
+    ASCII,
+    
+    /**
+     * The user is allowed to enter a phone number.
+     */
+    PHONE_NUMBER,
+    
+    /**
+     * The user is allowed to enter a URL.
+     */
+    URL,
+    
+    /**
+     * The user is allowed to enter a real number value.
+     * This extends kEditBoxInputModeNumeric by allowing a decimal point.
+     */
+    DECIMAL,
+    
+    /**
+     * The user is allowed to enter any text, except for line breaks.
+     */
+    SINGLE_LINE,
+};
+
+
 NS_CC_BEGIN
 
 /**
@@ -109,7 +154,19 @@ public:
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
     virtual void setIMEKeyboardState(bool open, std::string str) = 0;
 #endif
-    
+
+//    @property(nonatomic) UITextAutocapitalizationType autocapitalizationType; // default is UITextAutocapitalizationTypeSentences
+//    @property(nonatomic) UITextAutocorrectionType autocorrectionType;         // default is UITextAutocorrectionTypeDefault
+//    @property(nonatomic) UITextSpellCheckingType spellCheckingType NS_AVAILABLE_IOS(5_0); // default is UITextSpellCheckingTypeDefault;
+//    @property(nonatomic) UIKeyboardType keyboardType;                         // default is UIKeyboardTypeDefault
+//    @property(nonatomic) UIKeyboardAppearance keyboardAppearance;             // default is UIKeyboardAppearanceDefault
+//    @property(nonatomic) UIReturnKeyType returnKeyType;                       // default is UIReturnKeyDefault (See note under UIReturnKeyType enum)
+//    @property(nonatomic) BOOL enablesReturnKeyAutomatically;                  // default is NO (when YES, will automatically disable return key when text widget has zero-length contents, and will automatically enable when text widget has non-zero-length contents)
+//    @property(nonatomic,getter=isSecureTextEntry) BOOL secureTextEntry;       // default is NO
+//    
+    virtual void setIMEKeyboardInputMode(KeyboardInputMode mode) = 0;
+    virtual void setIMEKeyboardSpellChecking(bool enable) = 0;
+
     virtual bool windowShouldClose() { return false; };
 
     //static method and member so that we can modify it on all platforms before create OpenGL context

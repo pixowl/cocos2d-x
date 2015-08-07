@@ -477,6 +477,11 @@ void GLViewImpl::setIMEKeyboardState(bool /*bOpen*/)
 
 }
 
+void GLViewImpl::setIMEKeyboardInputMode(KeyboardInputMode mode)
+{
+
+}
+
 void GLViewImpl::setFrameZoomFactor(float zoomFactor)
 {
     CCASSERT(zoomFactor > 0.0f, "zoomFactor must be larger than 0");
