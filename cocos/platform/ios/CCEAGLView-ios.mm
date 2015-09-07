@@ -412,6 +412,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesBegin(i, (intptr_t*)ids, xs, ys);
+    
+    [super touchesBegan:touches withEvent:event];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -430,6 +432,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesMove(i, (intptr_t*)ids, xs, ys);
+    
+    [super touchesMoved:touches withEvent:event];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -448,6 +452,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesEnd(i, (intptr_t*)ids, xs, ys);
+    
+    [super touchesEnded:touches withEvent:event];
 }
     
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -466,6 +472,8 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesCancel(i, (intptr_t*)ids, xs, ys);
+    
+    [super touchesCancelled:touches withEvent:event];
 }
 
 #pragma mark - UIView - Responder
