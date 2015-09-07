@@ -48,8 +48,6 @@ public:
     void end() override;
     void swapBuffers() override;
     void setIMEKeyboardState(bool bOpen) override;
-    virtual void setIMEKeyboardInputMode(KeyboardInputMode mode) override;
-    virtual void setIMEKeyboardSpellChecking(bool enable) override;
 
 protected:
     GLViewImpl();

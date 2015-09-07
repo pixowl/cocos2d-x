@@ -389,6 +389,84 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
     }
 }
 
+// Pass the touches to the superview
+#pragma mark CCEAGLView - Touch Delegate
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (isKeyboardShown_)
+    {
+        [self handleTouchesAfterKeyboardShow];
+    }
+    
+    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        ids[i] = touch;
+        xs[i] = [touch locationInView: [touch view]].x * self.contentScaleFactor;;
+        ys[i] = [touch locationInView: [touch view]].y * self.contentScaleFactor;;
+        ++i;
+    }
+
+    auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    glview->handleTouchesBegin(i, (intptr_t*)ids, xs, ys);
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        ids[i] = touch;
+        xs[i] = [touch locationInView: [touch view]].x * self.contentScaleFactor;;
+        ys[i] = [touch locationInView: [touch view]].y * self.contentScaleFactor;;
+        ++i;
+    }
+
+    auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    glview->handleTouchesMove(i, (intptr_t*)ids, xs, ys);
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        ids[i] = touch;
+        xs[i] = [touch locationInView: [touch view]].x * self.contentScaleFactor;;
+        ys[i] = [touch locationInView: [touch view]].y * self.contentScaleFactor;;
+        ++i;
+    }
+
+    auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    glview->handleTouchesEnd(i, (intptr_t*)ids, xs, ys);
+}
+    
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch* ids[IOS_MAX_TOUCHES_COUNT] = {0};
+    float xs[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    float ys[IOS_MAX_TOUCHES_COUNT] = {0.0f};
+    
+    int i = 0;
+    for (UITouch *touch in touches) {
+        ids[i] = touch;
+        xs[i] = [touch locationInView: [touch view]].x * self.contentScaleFactor;;
+        ys[i] = [touch locationInView: [touch view]].y * self.contentScaleFactor;;
+        ++i;
+    }
+
+    auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    glview->handleTouchesCancel(i, (intptr_t*)ids, xs, ys);
+}
 
 #pragma mark - UIView - Responder
 
@@ -462,8 +540,6 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 @synthesize markedTextStyle;
 // @synthesize selectedTextRange;       // must implement
 @synthesize tokenizer;
-@synthesize keyboardType;
-@synthesize spellCheckingType;
 
 /* Text may have a selection, either zero-length (a caret) or ranged.  Editing operations are
  * always performed on the text from this selection.  nil corresponds to no selection. */
