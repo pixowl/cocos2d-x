@@ -44,6 +44,7 @@ THE SOFTWARE.
 #include "2d/CCComponentContainer.h"
 #include "renderer/CCGLProgram.h"
 #include "renderer/CCGLProgramState.h"
+#include "renderer/CCMaterial.h"
 #include "math/TransformUtils.h"
 
 #include "deprecated/CCString.h"
@@ -83,14 +84,11 @@ Node::Node(void)
 , _scaleX(1.0f)
 , _scaleY(1.0f)
 , _scaleZ(1.0f)
-, _position(Vec2::ZERO)
 , _positionZ(0.0f)
 , _usingNormalizedPosition(false)
 , _normalizedPositionDirty(false)
 , _skewX(0.0f)
 , _skewY(0.0f)
-, _anchorPointInPoints(Vec2::ZERO)
-, _anchorPoint(Vec2::ZERO)
 , _contentSize(Size::ZERO)
 , _contentSizeDirty(true)
 , _transformDirty(true)
@@ -127,6 +125,9 @@ Node::Node(void)
 , _physicsRotation(0.0f)
 , _physicsTransformDirty(true)
 , _updateTransformFromPhysics(true)
+, _physicsWorld(nullptr)
+, _physicsBodyAssociatedWith(0)
+, _physicsRotationOffset(0.0f)
 #endif
 , _displayedOpacity(255)
 , _realOpacity(255)
@@ -198,6 +199,8 @@ Node::~Node()
 
 #endif
     
+    stopAllActions();
+    unscheduleAllCallbacks();
     CC_SAFE_RELEASE_NULL(_actionManager);
     CC_SAFE_RELEASE_NULL(_scheduler);
     
@@ -218,19 +221,21 @@ bool Node::init()
 
 void Node::cleanup()
 {
+#if CC_ENABLE_SCRIPT_BINDING
+    if (_scriptType == kScriptTypeJavascript)
+    {
+        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnCleanup))
+            return;
+    }
+    else if (_scriptType == kScriptTypeLua)
+    {
+        ScriptEngineManager::sendNodeEventToLua(this, kNodeOnCleanup);
+    }
+#endif // #if CC_ENABLE_SCRIPT_BINDING
+    
     // actions
     this->stopAllActions();
     this->unscheduleAllCallbacks();
-
-#if CC_ENABLE_SCRIPT_BINDING
-    if ( _scriptType != kScriptTypeNone)
-    {
-        int action = kNodeOnCleanup;
-        BasicScriptData data(this,(void*)&action);
-        ScriptEvent scriptEvent(kNodeEvent,(void*)&data);
-        ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-    }
-#endif // #if CC_ENABLE_SCRIPT_BINDING
 
     // timers
     for( const auto &child: _children)
@@ -332,8 +337,9 @@ void Node::setRotation(float rotation)
     _rotationZ_X = _rotationZ_Y = rotation;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
     
@@ -397,7 +403,7 @@ void Node::updateRotation3D()
     float x = _rotationQuat.x, y = _rotationQuat.y, z = _rotationQuat.z, w = _rotationQuat.w;
     _rotationX = atan2f(2.f * (w * x + y * z), 1.f - 2.f * (x * x + y * y));
     _rotationY = asinf(2.f * (w * y - z * x));
-    _rotationZ_X = atanf(2.f * (w * z + x * y) / (1.f - 2.f * (y * y + z * z)));
+    _rotationZ_X = atan2f(2.f * (w * z + x * y), 1.f - 2.f * (y * y + z * z));
     
     _rotationX = CC_RADIANS_TO_DEGREES(_rotationX);
     _rotationY = CC_RADIANS_TO_DEGREES(_rotationY);
@@ -473,8 +479,9 @@ void Node::setScale(float scale)
     _scaleX = _scaleY = _scaleZ = scale;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
 }
@@ -495,8 +502,9 @@ void Node::setScale(float scaleX,float scaleY)
     _scaleY = scaleY;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
 }
@@ -510,8 +518,9 @@ void Node::setScaleX(float scaleX)
     _scaleX = scaleX;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
 }
@@ -554,8 +563,9 @@ void Node::setScaleY(float scaleY)
     _scaleY = scaleY;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
 }
@@ -590,8 +600,9 @@ void Node::setPosition(float x, float y)
     _transformUpdated = _transformDirty = _inverseDirty = true;
     _usingNormalizedPosition = false;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
 }
@@ -659,8 +670,9 @@ void Node::setNormalizedPosition(const Vec2& position)
     _normalizedPositionDirty = true;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 #if CC_USE_PHYSICS
-    if (_physicsBody && _physicsBody->getWorld()) {
-        _physicsBody->getWorld()->_updateBodyTransform = true;
+    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
+    {
+        _physicsWorld->_updateBodyTransform = true;
     }
 #endif
 }
@@ -700,18 +712,10 @@ const Vec2& Node::getAnchorPoint() const
 
 void Node::setAnchorPoint(const Vec2& point)
 {
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr && !point.equals(Vec2::ANCHOR_MIDDLE))
-    {
-        CCLOG("Node warning: This node has a physics body, the anchor must be in the middle, you cann't change this to other value.");
-        return;
-    }
-#endif
-    
     if (! point.equals(_anchorPoint))
     {
         _anchorPoint = point;
-        _anchorPointInPoints = Vec2(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
+        _anchorPointInPoints.set(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
         _transformUpdated = _transformDirty = _inverseDirty = true;
     }
 }
@@ -728,7 +732,7 @@ void Node::setContentSize(const Size & size)
     {
         _contentSize = size;
 
-        _anchorPointInPoints = Vec2(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
+        _anchorPointInPoints.set(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
         _transformUpdated = _transformDirty = _inverseDirty = _contentSizeDirty = true;
     }
 }
@@ -802,7 +806,7 @@ void Node::setOrderOfArrival(int orderOfArrival)
     _orderOfArrival = orderOfArrival;
 }
 
-void Node::setUserObject(Ref *userObject)
+void Node::setUserObject(Ref* userObject)
 {
     CC_SAFE_RETAIN(userObject);
     CC_SAFE_RELEASE(_userObject);
@@ -814,23 +818,29 @@ GLProgramState* Node::getGLProgramState() const
     return _glProgramState;
 }
 
-void Node::setGLProgramState(cocos2d::GLProgramState *glProgramState)
+void Node::setGLProgramState(cocos2d::GLProgramState* glProgramState)
 {
     if (glProgramState != _glProgramState)
     {
         CC_SAFE_RELEASE(_glProgramState);
         _glProgramState = glProgramState;
         CC_SAFE_RETAIN(_glProgramState);
+
+        if (_glProgramState)
+            _glProgramState->setNodeBinding(this);
     }
 }
 
-void Node::setGLProgram(GLProgram *glProgram)
+
+void Node::setGLProgram(GLProgram* glProgram)
 {
     if (_glProgramState == nullptr || (_glProgramState && _glProgramState->getGLProgram() != glProgram))
     {
         CC_SAFE_RELEASE(_glProgramState);
         _glProgramState = GLProgramState::getOrCreateWithGLProgram(glProgram);
         _glProgramState->retain();
+
+        _glProgramState->setNodeBinding(this);
     }
 }
 
@@ -869,9 +879,9 @@ void Node::childrenAlloc()
 
 Node* Node::getChildByTag(int tag) const
 {
-    CCASSERT( tag != Node::INVALID_TAG, "Invalid tag");
+    CCASSERT(tag != Node::INVALID_TAG, "Invalid tag");
 
-    for (const auto& child : _children)
+    for (const auto child : _children)
     {
         if(child && child->_tag == tag)
             return child;
@@ -1048,8 +1058,17 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     child->setOrderOfArrival(s_globalOrderOfArrival++);
     
 #if CC_USE_PHYSICS
+    _physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
+    auto parentNode = this;
+    while (parentNode->_parent)
+    {
+        parentNode = parentNode->_parent;
+        parentNode->_physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
+    }
+
+    auto scene = dynamic_cast<Scene*>(parentNode);
+
     // Recursive add children with which have physics body.
-    auto scene = this->getScene();
     if (scene && scene->getPhysicsWorld())
     {
         scene->addChildToPhysicsWorld(child);
@@ -1294,6 +1313,12 @@ uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFl
             _normalizedPositionDirty = false;
         }
     }
+
+    //remove this two line given that isVisitableByVisitingCamera should not affect the calculation of transform given that we are visiting scene
+    //without involving view and projection matrix.
+    
+//    if (!isVisitableByVisitingCamera())
+//        return parentFlags;
     
     uint32_t flags = parentFlags;
     flags |= (_transformUpdated ? FLAGS_TRANSFORM_DIRTY : 0);
@@ -1388,6 +1413,11 @@ void Node::onEnter()
     if (_onEnterCallback)
         _onEnterCallback();
 
+    if (_componentContainer && !_componentContainer->isEmpty())
+    {
+        _componentContainer->onEnter();
+    }
+
 #if CC_ENABLE_SCRIPT_BINDING
     if (_scriptType == kScriptTypeJavascript)
     {
@@ -1467,6 +1497,11 @@ void Node::onExit()
     if (_onExitCallback)
         _onExitCallback();
     
+    if (_componentContainer && !_componentContainer->isEmpty())
+    {
+        _componentContainer->onExit();
+    }
+
 #if CC_ENABLE_SCRIPT_BINDING
     if (_scriptType == kScriptTypeJavascript)
     {
@@ -1726,6 +1761,28 @@ AffineTransform Node::getNodeToParentAffineTransform() const
     return ret;
 }
 
+
+Mat4 Node::getNodeToParentTransform(Node* ancestor) const
+{
+    Mat4 t(this->getNodeToParentTransform());
+
+    for (Node *p = _parent;  p != nullptr && p != ancestor ; p = p->getParent())
+    {
+        t = p->getNodeToParentTransform() * t;
+    }
+
+    return t;
+}
+
+AffineTransform Node::getNodeToParentAffineTransform(Node* ancestor) const
+{
+    AffineTransform t(this->getNodeToParentAffineTransform());
+
+    for (Node *p = _parent; p != nullptr && p != ancestor; p = p->getParent())
+        t = AffineTransformConcat(t, p->getNodeToParentAffineTransform());
+
+    return t;
+}
 const Mat4& Node::getNodeToParentTransform() const
 {
     if (_transformDirty)
@@ -1747,7 +1804,7 @@ const Mat4& Node::getNodeToParentTransform() const
         Vec2 anchorPoint(_anchorPointInPoints.x * _scaleX, _anchorPointInPoints.y * _scaleY);
         
         // caculate real position
-        if (! needsSkewMatrix && !_anchorPointInPoints.equals(Vec2::ZERO))
+        if (! needsSkewMatrix && !_anchorPointInPoints.isZero())
         {
             x += -anchorPoint.x;
             y += -anchorPoint.y;
@@ -1810,7 +1867,7 @@ const Mat4& Node::getNodeToParentTransform() const
             _transform = _transform * skewMatrix;
             
             // adjust anchor point
-            if (!_anchorPointInPoints.equals(Vec2::ZERO))
+            if (!_anchorPointInPoints.isZero())
             {
                 // FIXME:: Argh, Mat4 needs a "translate" method.
                 // FIXME:: Although this is faster than multiplying a vec4 * mat4
@@ -1881,24 +1938,12 @@ const Mat4& Node::getParentToNodeTransform() const
 
 AffineTransform Node::getNodeToWorldAffineTransform() const
 {
-    AffineTransform t(this->getNodeToParentAffineTransform());
-
-    for (Node *p = _parent; p != nullptr; p = p->getParent())
-        t = AffineTransformConcat(t, p->getNodeToParentAffineTransform());
-
-    return t;
+    return this->getNodeToParentAffineTransform(nullptr);
 }
 
 Mat4 Node::getNodeToWorldTransform() const
 {
-    Mat4 t(this->getNodeToParentTransform());
-
-    for (Node *p = _parent; p != nullptr; p = p->getParent())
-    {
-        t = p->getNodeToParentTransform() * t;
-    }
-
-    return t;
+    return this->getNodeToParentTransform(nullptr);
 }
 
 AffineTransform Node::getWorldToNodeAffineTransform() const
@@ -2027,6 +2072,14 @@ void Node::setPhysicsBody(PhysicsBody* body)
         _physicsBody->_node = nullptr;
         _physicsBody->release();
         _physicsBody = nullptr;
+
+        _physicsBodyAssociatedWith--;
+        auto parentNode = this;
+        while (parentNode->_parent)
+        {
+            parentNode = parentNode->_parent;
+            parentNode->_physicsBodyAssociatedWith--;
+        }
     }
 
     if (body)
@@ -2038,20 +2091,21 @@ void Node::setPhysicsBody(PhysicsBody* body)
         
         body->_node = this;
         body->retain();
-        
-        // physics rotation based on body position, but node rotation based on node anthor point
-        // it cann't support both of them, so I clear the anthor point to default.
-        if (!getAnchorPoint().equals(Vec2::ANCHOR_MIDDLE))
-        {
-            CCLOG("Node warning: setPhysicsBody sets anchor point to Vec2::ANCHOR_MIDDLE.");
-            setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        }
 
         _physicsBody = body;
         _physicsScaleStartX = _scaleX;
         _physicsScaleStartY = _scaleY;
+        _physicsRotationOffset = _rotationZ_X;
 
-        auto scene = getScene();
+        _physicsBodyAssociatedWith++;
+        auto parentNode = this;
+        while (parentNode->_parent)
+        {
+            parentNode = parentNode->_parent;
+            parentNode->_physicsBodyAssociatedWith++;
+        }
+
+        auto scene = dynamic_cast<Scene*>(parentNode);
         if (scene && scene->getPhysicsWorld())
         {
             _physicsTransformDirty = true;
@@ -2075,12 +2129,18 @@ void Node::updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t pare
     if (_physicsBody && ((flags & FLAGS_DIRTY_MASK) || _physicsTransformDirty))
     {
         _physicsTransformDirty = false;
-        Vec3 vec3(_position.x, _position.y, 0);
+        
+        Vec3 vec3(_contentSize.width * 0.5f, _contentSize.height * 0.5f, 0);
         Vec3 ret;
-        parentTransform.transformPoint(vec3, &ret);
+        _modelViewTransform.transformPoint(vec3, &ret);
         _physicsBody->setPosition(Vec2(ret.x, ret.y));
+
+        parentTransform.getInversed().transformPoint(&ret);
+        _offsetX = ret.x - _position.x;
+        _offsetY = ret.y - _position.y;
+
         _physicsBody->setScale(scaleX / _physicsScaleStartX, scaleY / _physicsScaleStartY);
-        _physicsBody->setRotation(_physicsRotation);
+        _physicsBody->setRotation(_physicsRotation - _physicsRotationOffset);
     }
 
     for (auto node : _children)
@@ -2093,16 +2153,18 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
 {
     auto& newPosition = _physicsBody->getPosition();
     auto& recordedPosition = _physicsBody->_recordedPosition;
+    auto updateBodyTransform = _physicsWorld->_updateBodyTransform;
     if (parentFlags || recordedPosition.x != newPosition.x || recordedPosition.y != newPosition.y)
     {
         recordedPosition = newPosition;
         Vec3 vec3(newPosition.x, newPosition.y, 0);
         Vec3 ret;
         parentTransform.getInversed().transformPoint(vec3, &ret);
-        setPosition(ret.x, ret.y);
+        setPosition(ret.x - _offsetX, ret.y - _offsetY);
     }
     _physicsRotation = _physicsBody->getRotation();
-    setRotation(_physicsRotation - _parent->_physicsRotation);
+    setRotation(_physicsRotation - _parent->_physicsRotation + _physicsRotationOffset);
+    _physicsWorld->_updateBodyTransform = updateBodyTransform;
 }
 
 #endif //CC_USE_PHYSICS

@@ -1,7 +1,16 @@
-
-
 #include "UISliderTest.h"
 
+USING_NS_CC;
+using namespace cocos2d::ui;
+
+UISliderTests::UISliderTests()
+{
+    ADD_TEST_CASE(UISliderTest);
+    ADD_TEST_CASE(UISliderTest_Scale9);
+    ADD_TEST_CASE(UISliderTest_Scale9_State_Change);
+    ADD_TEST_CASE(UISliderNormalDefaultTest);
+    ADD_TEST_CASE(UISliderDisabledDefaultTest);
+}
 
 // UISliderTest
 
@@ -22,7 +31,7 @@ bool UISliderTest::init()
         Size widgetSize = _widget->getContentSize();
         
         // Add a label in which the slider alert will be displayed
-        _displayValueLabel = Text::create("Move the slider thumb","Move the slider thumb",32);
+        _displayValueLabel = TextBMFont::create("Move the slider thumb", "ccb/markerfelt24shadow.fnt");
         _displayValueLabel->setAnchorPoint(Vec2(0.5f, -1));
         _displayValueLabel->setPosition(Vec2(widgetSize.width / 2.0f, widgetSize.height / 2.0f));
         _uiLayer->addChild(_displayValueLabel);
@@ -223,7 +232,7 @@ bool UISliderNormalDefaultTest::init()
                                  widgetSize.height / 2.0f + 50));
         _uiLayer->addChild(slider);
         
-        Slider* sliderScale9 = Slider::create("cocosui/sliderTrack2.png", "cocosui/sliderThumb.png");
+        Slider* sliderScale9 = (Slider*)slider->clone();
         sliderScale9->setScale9Enabled(true);
         sliderScale9->setCapInsets(Rect(0, 0, 0, 0));
         sliderScale9->setZoomScale(1.0);
@@ -278,7 +287,7 @@ bool UISliderDisabledDefaultTest::init()
                                  widgetSize.height / 2.0f + 50));
         _uiLayer->addChild(slider);
         
-        Slider* sliderScale9 = Slider::create("cocosui/slidbar.png", "cocosui/sliderballnormal.png");
+        Slider* sliderScale9 = (Slider*)slider->clone();
         sliderScale9->setScale9Enabled(true);
         sliderScale9->setEnabled(false);
         sliderScale9->setBright(false);

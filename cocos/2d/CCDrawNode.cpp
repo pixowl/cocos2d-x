@@ -83,7 +83,8 @@ static inline Vec2 v2fforangle(float _a_)
 
 static inline Vec2 v2fnormalize(const Vec2 &p)
 {
-    Vec2 r = Vec2(p.x, p.y).getNormalized();
+    Vec2 r(p.x, p.y);
+    r.normalize();
     return v2f(r.x, r.y);
 }
 
@@ -370,7 +371,9 @@ void DrawNode::onDrawGLLine(const Mat4 &transform, uint32_t flags)
     auto glProgram = GLProgramCache::getInstance()->getGLProgram(GLProgram::SHADER_NAME_POSITION_LENGTH_TEXTURE_COLOR);
     glProgram->use();
     glProgram->setUniformsForBuiltins(transform);
-    
+
+    GL::blendFunc(_blendFunc.src, _blendFunc.dst);
+
     if (_dirtyGLLine)
     {
         glBindBuffer(GL_ARRAY_BUFFER, _vboGLLine);
@@ -411,7 +414,9 @@ void DrawNode::onDrawGLPoint(const Mat4 &transform, uint32_t flags)
     auto glProgram = GLProgramCache::getInstance()->getGLProgram(GLProgram::SHADER_NAME_POSITION_COLOR_TEXASPOINTSIZE);
     glProgram->use();
     glProgram->setUniformsForBuiltins(transform);
-    
+
+    GL::blendFunc(_blendFunc.src, _blendFunc.dst);
+
     if (_dirtyGLPoint)
     {
         glBindBuffer(GL_ARRAY_BUFFER, _vboGLPoint);

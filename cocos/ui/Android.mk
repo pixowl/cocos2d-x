@@ -5,6 +5,10 @@ LOCAL_MODULE := cocos_ui_static
 
 LOCAL_MODULE_FILENAME := libui
 
+ifeq ($(USE_ARM_MODE),1)
+LOCAL_ARM_MODE := arm
+endif
+
 LOCAL_SRC_FILES := \
 UIWidget.cpp \
 UILayout.cpp \
@@ -36,7 +40,6 @@ UIWebViewImpl-android.cpp \
 UIEditBox/UIEditBox.cpp \
 UIEditBox/UIEditBoxImpl-android.cpp \
 UILayoutComponent.cpp \
-shaders/UIShaders.cpp \
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../editor-support
 
