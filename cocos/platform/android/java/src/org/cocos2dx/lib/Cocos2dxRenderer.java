@@ -124,18 +124,22 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 
     public void handleActionDown(final int id, final float x, final float y) {
         Cocos2dxRenderer.nativeTouchesBegin(id, x, y);
+        com.pixowl.tools.TouchInterface.nativeTouchesBegin(id, x, y);
     }
 
     public void handleActionUp(final int id, final float x, final float y) {
         Cocos2dxRenderer.nativeTouchesEnd(id, x, y);
+        com.pixowl.tools.TouchInterface.nativeTouchesEnd(id, x, y);
     }
 
     public void handleActionCancel(final int[] ids, final float[] xs, final float[] ys) {
         Cocos2dxRenderer.nativeTouchesCancel(ids, xs, ys);
+        com.pixowl.tools.TouchInterface.nativeTouchesCancel(ids, xs, ys);
     }
 
     public void handleActionMove(final int[] ids, final float[] xs, final float[] ys) {
         Cocos2dxRenderer.nativeTouchesMove(ids, xs, ys);
+        com.pixowl.tools.TouchInterface.nativeTouchesMove(ids, xs, ys);
     }
 
     public void handleKeyDown(final int keyCode) {
