@@ -248,6 +248,18 @@ public:
      * @param filePath The path of the effect file.
      */
     virtual void unloadEffect(const char* filePath);
+    
+    
+    //------------------------------------------------------------------------------------
+    // PIXOWL's EXTENSION
+    virtual void setEffectVolume(unsigned int soundId, float volume);
+    virtual void setEffectPitch(unsigned int soundId, float pitch);
+    virtual void setEffectPan(unsigned int soundId, float pan);
+    
+    virtual float getEffectVolume(unsigned int soundId);
+    virtual float getEffectPitch(unsigned int soundId);
+    virtual float getEffectPan(unsigned int soundId);
+    //------------------------------------------------------------------------------------
 
 protected:
     /**

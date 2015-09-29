@@ -949,7 +949,7 @@ static BOOL _mixerRateSet = NO;
         alSourceStop(_sources[sourceIndex].sourceId);
     }
     alGetError();//Clear error in case we stopped any sounds that couldn't be stopped
-}    
+}
 
 /**
  * Stop a sound playing.
@@ -1073,7 +1073,66 @@ static BOOL _mixerRateSet = NO;
         }    
     }    
 #endif    
-}    
+}
+
+-(void)setSound:(ALuint)soundId volume:(float)volume
+{
+    if( !functioning_ )
+        return;
+    
+    alSourcef(soundId, AL_GAIN, volume);
+}
+
+-(void)setSound:(ALuint)soundId pitch:(float)pitch
+{
+    if( !functioning_ )
+        return;
+    
+    alSourcef(soundId, AL_PITCH, pitch);
+}
+
+-(void)setSound:(ALuint)soundId pan:(float)pan
+{
+    if( !functioning_ )
+        return;
+    
+    float sourcePosAL[] = {pan, 0.0f, 0.0f};//Set position - just using left and right panning
+    alSourcefv(soundId, AL_POSITION, sourcePosAL);
+}
+
+-(float)getSoundVolume:(ALuint)soundId
+{
+    if( !functioning_ )
+        return 0.0f;
+    
+    float volume = 0.0f;
+    alGetSourcef(soundId, AL_GAIN, &volume);
+    
+    return volume;
+}
+
+-(float)getSoundPitch:(ALuint)soundId
+{
+    if( !functioning_ )
+        return 0.0f;
+    
+    float pitch = 0.0f;
+    alGetSourcef(soundId, AL_PITCH, &pitch);
+    
+    return pitch;
+}
+
+-(float)getSoundPan:(ALuint)soundId
+{
+    if( !functioning_ )
+        return 0.0f;
+    
+    float sourcePosAL[3];//Set position - just using left and right panning
+    alGetSourcefv(soundId, AL_POSITION, sourcePosAL);
+    
+    return sourcePosAL[0];
+}
+
 
 @end
 

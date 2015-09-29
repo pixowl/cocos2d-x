@@ -499,3 +499,75 @@ void AndroidJavaEngine::unloadEffect(const char* filePath)
         _jni_unloadEffect(filePath);
     }
 }
+
+void AndroidJavaEngine::setEffectVolume(unsigned int soundId, float volume)
+{
+    LOGD( "[AndroidJavaEngine::setEffectVolume] Method not implemented!!" );
+//    if (!_implementBaseOnAudioEngine)
+//    {
+//        _jni_setEffectsVolume(soundId, volume);
+//    }
+}
+
+void AndroidJavaEngine::setEffectPitch(unsigned int soundId, float pitch)
+{
+    LOGD( "[AndroidJavaEngine::setEffectPitch] Method not implemented!!" );
+//    if (!_implementBaseOnAudioEngine)
+//    {
+//        _jni_setEffectsPitch(soundId, pitch);
+//    }
+}
+
+void AndroidJavaEngine::setEffectPan(unsigned int soundId, float pan)
+{
+    LOGD( "[AndroidJavaEngine::setEffectPan] Method not implemented!!" );
+//    if (!_implementBaseOnAudioEngine)
+//    {
+//        _jni_setEffectsPan(soundId, pan);
+//    }
+}
+
+float AndroidJavaEngine::getEffectVolume(unsigned int soundId)
+{
+    LOGD( "[AndroidJavaEngine::getEffectVolume] Method not implemented!!" );
+    
+    return 0.0f;
+//    if (!_implementBaseOnAudioEngine)
+//    {
+//        return _jni_getEffectVolume(soundId);
+//    }
+//    else
+//    {
+//        return 0.0f;
+//    }
+}
+
+float AndroidJavaEngine::getEffectPitch(unsigned int soundId)
+{
+    LOGD( "[AndroidJavaEngine::getEffectPitch] Method not implemented!!" );
+    
+    return 0.0f;
+//    if (!_implementBaseOnAudioEngine)
+//    {
+//        return _jni_getEffectPitch(soundId);
+//    }
+//    else
+//    {
+//        return 0.0f;
+//    }
+}
+
+float AndroidJavaEngine::getEffectPan(unsigned int soundId)
+{
+    LOGD( "[AndroidJavaEngine::getEffectPan] Method not implemented!!" );
+    
+    return 0.0f;
+//    if (!_implementBaseOnAudioEngine)
+//    {
+//        return _jni_getEffectPan(soundId);
+//    }
+//    else
+//    {
+//        return 0.0f;
+//    }
+}

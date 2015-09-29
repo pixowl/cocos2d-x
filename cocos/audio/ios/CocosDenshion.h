@@ -284,6 +284,18 @@ typedef struct _sourceInfo {
 /** Used internally, never call unless you know what you are doing */
 -(void) _soundSourcePreRelease:(CDSoundSource *) soundSource;
 
+//-------------------------------------------------------------------------
+// Pixowl's Extension
+-(void) setSound:(ALuint)sourceId volume:(float)volume;
+-(void) setSound:(ALuint)sourceId pitch:(float)pitch;
+-(void) setSound:(ALuint)sourceId pan:(float)pan;
+
+-(float)getSoundVolume:(ALuint)soundId;
+-(float)getSoundPitch:(ALuint)soundId;
+-(float)getSoundPan:(ALuint)soundId;
+//-------------------------------------------------------------------------
+
+
 @end
 
 #pragma mark CDSoundSource

@@ -219,7 +219,7 @@ static CDBufferManager *bufferManager = nil;
 -(float) effectsVolume
 {
     return am.soundEngine.masterGain;
-}    
+}
 
 -(void) setEffectsVolume:(float) volume
 {
@@ -234,7 +234,57 @@ static CDBufferManager *bufferManager = nil;
         return result;
     } else {
         return nil;
-    }    
-}    
+    }
+}
 
-@end 
+
+-(void) setEffect:(ALuint)soundId volume:(float)volume
+{
+    if(soundId != kCDNoBuffer)
+    {
+        [am.soundEngine setSound:soundId volume:volume];
+    }
+}
+
+-(void) setEffect:(ALuint)soundId pitch:(float)pitch
+{
+    if(soundId != kCDNoBuffer)
+    {
+        [am.soundEngine setSound:soundId pitch:pitch];
+    }
+}
+
+-(void) setEffect:(ALuint)soundId pan:(float)pan
+{
+    if(soundId != kCDNoBuffer)
+    {
+        [am.soundEngine setSound:soundId pan:pan];
+    }
+}
+
+-(void) getEffectVolume:(ALuint)soundId
+{
+    if(soundId != kCDNoBuffer)
+    {
+        [am.soundEngine getSoundVolume:soundId];
+    }
+}
+
+-(void) getEffectPitch:(ALuint)soundId
+{
+    if(soundId != kCDNoBuffer)
+    {
+        [am.soundEngine getSoundPitch:soundId];
+    }
+}
+
+-(void) getEffectPan:(ALuint)soundId
+{
+    if(soundId != kCDNoBuffer)
+    {
+        [am.soundEngine getSoundPan:soundId];
+    }
+}
+
+
+@end

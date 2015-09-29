@@ -79,4 +79,16 @@ namespace CocosDenshion {
     void SimpleAudioEngine::stopAllEffects() { }
     void SimpleAudioEngine::preloadEffect(const char* pszFilePath) { }
     void SimpleAudioEngine::unloadEffect(const char* pszFilePath) { }
+    
+    //------------------------------------------------------------------------------------
+    // PIXOWL's EXTENSION
+    void setEffectVolume(unsigned int soundId, float volume) {}
+    void setEffectPitch(unsigned int soundId, float pitch) {}
+    void setEffectPan(unsigned int soundId, float pan) {}
+    
+    float getEffectVolume(unsigned int soundId) { return 0.0f; }
+    float getEffectPitch(unsigned int soundId) { return 0.0f; }
+    float getEffectPan(unsigned int soundId) { return 0.0f; }
+    //------------------------------------------------------------------------------------
+
 }

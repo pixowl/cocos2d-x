@@ -94,6 +94,17 @@
 /** Gets a CDSoundSource object set up to play the specified file. */
 -(CDSoundSource *) soundSourceForFile:(NSString*) filePath;
 
+//-------------------------------------------------------------------------
+// Pixowl's Extension
+-(void)setEffect:(ALuint)soundId volume:(float)volume;
+-(void)setEffect:(ALuint)soundId pitch:(float)pitch;
+-(void)setEffect:(ALuint)soundId pan:(float)pan;
+
+-(float)getEffectVolume:(ALuint)soundId;
+-(float)getEffectPitch:(ALuint)soundId;
+-(float)getEffectPan:(ALuint)soundId;
+//-------------------------------------------------------------------------
+
 /** Shuts down the shared audio engine instance so that it can be reinitialised */
 +(void) end;
 
