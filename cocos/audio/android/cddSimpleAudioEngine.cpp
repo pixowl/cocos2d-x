@@ -82,13 +82,13 @@ namespace CocosDenshion {
     
     //------------------------------------------------------------------------------------
     // PIXOWL's EXTENSION
-    void setEffectVolume(unsigned int soundId, float volume) {}
-    void setEffectPitch(unsigned int soundId, float pitch) {}
-    void setEffectPan(unsigned int soundId, float pan) {}
+    void SimpleAudioEngine::setEffectVolume(unsigned int soundId, float volume) {}
+    void SimpleAudioEngine::setEffectPitch(unsigned int soundId, float pitch) {}
+    void SimpleAudioEngine::setEffectPan(unsigned int soundId, float pan) {}
     
-    float getEffectVolume(unsigned int soundId) { return 0.0f; }
-    float getEffectPitch(unsigned int soundId) { return 0.0f; }
-    float getEffectPan(unsigned int soundId) { return 0.0f; }
+    float SimpleAudioEngine::getEffectVolume(unsigned int soundId) { return 0.0f; }
+    float SimpleAudioEngine::getEffectPitch(unsigned int soundId) { return 0.0f; }
+    float SimpleAudioEngine::getEffectPan(unsigned int soundId) { return 0.0f; }
     //------------------------------------------------------------------------------------
 
 }
