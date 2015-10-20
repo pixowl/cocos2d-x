@@ -59,7 +59,12 @@ public class Cocos2dxSound {
     private final HashMap<String, ArrayList<Integer>> mPathStreamIDsMap = new HashMap<String, ArrayList<Integer>>();
 
     private final HashMap<String, Integer> mPathSoundIDMap = new HashMap<String, Integer>();
-
+    
+    
+    private final HashMap<Integer, Float> mVolMap = new HashMap<Integer, Float>();
+    private final HashMap<Integer, Float> mPanMap = new HashMap<Integer, Float>();
+    private final HashMap<Integer, Float> mPichMap = new HashMap<Integer, Float>();
+    
     private ConcurrentHashMap<Integer, SoundInfoForLoadedCompleted>  mPlayWhenLoadedEffects =
             new ConcurrentHashMap<Integer, SoundInfoForLoadedCompleted>();
 
@@ -101,17 +106,17 @@ public class Cocos2dxSound {
             CocosPlayClient.updateAssets(path);
         }
         CocosPlayClient.notifyFileLoaded(path);
-        Integer soundID = this.mPathSoundIDMap.get(path);
+        Integer soundId = this.mPathSoundIDMap.get(path);
 
-        if (soundID == null) {
-            soundID = this.createSoundIDFromAsset(path);
+        if (soundId == null) {
+            soundId = this.createSoundIDFromAsset(path);
             // save value just in case if file is really loaded
-            if (soundID != Cocos2dxSound.INVALID_SOUND_ID) {
-                this.mPathSoundIDMap.put(path, soundID);
+            if (soundId != Cocos2dxSound.INVALID_SOUND_ID) {
+                this.mPathSoundIDMap.put(path, soundId);
             }
         }
 
-        return soundID;
+        return soundId;
     }
 
     public void unloadEffect(final String path) {
@@ -120,15 +125,19 @@ public class Cocos2dxSound {
         if (streamIDs != null) {
             for (final Integer steamID : streamIDs) {
                 this.mSoundPool.stop(steamID);
+                this.mVolMap.remove(steamID);
+                this.mPanMap.remove(steamID);
+                this.mPichMap.remove(steamID);
             }
         }
         this.mPathStreamIDsMap.remove(path);
 
         // unload effect
-        final Integer soundID = this.mPathSoundIDMap.get(path);
-        if(soundID != null){
-            this.mSoundPool.unload(soundID);
+        final Integer soundId = this.mPathSoundIDMap.get(path);
+        if(soundId != null){
+            this.mSoundPool.unload(soundId);
             this.mPathSoundIDMap.remove(path);
+
         }
     }
 
@@ -235,6 +244,54 @@ public class Cocos2dxSound {
     public float getEffectsVolume() {
         return (this.mLeftVolume + this.mRightVolume) / 2;
     }
+   
+    public float getEffectVolume(final int soundId)
+    {
+    			
+        float volume = this.mVolMap.get(soundId);
+    	Log.e(Cocos2dxSound.TAG, "getEffectVolume soundId " + soundId + " volume = " + volume);
+        return volume;
+    }
+    
+    public float getEffectPitch  (final int soundId)
+    {
+        float pitch  = this.mPichMap.get(soundId);
+        return pitch;
+    }
+    
+    public float getEffectPan    (final int soundId)
+    {
+        float pan = this.mPanMap.get(soundId);
+        return pan;
+    }
+    
+    public void setEffectsVolume (final int soundId, final float volume) 
+    {
+    	this.mVolMap.put(soundId, volume);
+    	float pan = this.mPanMap.get(soundId);
+        float leftVolume = this.mLeftVolume * volume * (1.0f - this.clamp(pan, 0.0f, 1.0f));
+        float rightVolume = this.mRightVolume * volume * (1.0f - this.clamp(-pan, 0.0f, 1.0f));
+    	this.mSoundPool.setVolume(soundId,leftVolume, rightVolume);
+    }
+    
+    public void setEffectsPitch  (final int soundId, final float pitch)
+    {
+        float soundRate = this.clamp(SOUND_RATE * pitch, 0.5f, 2.0f);
+        this.mSoundPool.setRate(soundId, soundRate);
+    }
+    
+    public void setEffectsPan    (final int soundId, final float pan) 
+    {
+    	float volume = this.mVolMap.get(soundId);
+        float leftVolume = this.mLeftVolume * volume * (1.0f - this.clamp(pan, 0.0f, 1.0f));
+        float rightVolume = this.mRightVolume * volume * (1.0f - this.clamp(-pan, 0.0f, 1.0f));
+    	this.mSoundPool.setVolume(soundId,leftVolume, rightVolume);
+    	this.mPanMap.put(soundId, pan);
+   }
+
+
+
+/**/    
 
     public void setEffectsVolume(float volume) {
         // volume should be in [0, 1.0]
@@ -264,10 +321,11 @@ public class Cocos2dxSound {
         this.mPathStreamIDsMap.clear();
         this.mPathSoundIDMap.clear();
         this.mPlayWhenLoadedEffects.clear();
-
+        this.mVolMap.clear();
+        this.mPanMap.clear();
+        this.mPichMap.clear();
         this.mLeftVolume = 0.5f;
         this.mRightVolume = 0.5f;
-
         this.initData();
     }
 
@@ -301,10 +359,17 @@ public class Cocos2dxSound {
         float leftVolume = this.mLeftVolume * gain * (1.0f - this.clamp(pan, 0.0f, 1.0f));
         float rightVolume = this.mRightVolume * gain * (1.0f - this.clamp(-pan, 0.0f, 1.0f));
         float soundRate = this.clamp(SOUND_RATE * pitch, 0.5f, 2.0f);
+        
+
+        
 
         // play sound
         int streamID = this.mSoundPool.play(soundId, this.clamp(leftVolume, 0.0f, 1.0f), this.clamp(rightVolume, 0.0f, 1.0f), Cocos2dxSound.SOUND_PRIORITY, loop ? -1 : 0, soundRate);
 
+        this.mVolMap.put(streamID, gain);
+        this.mPanMap.put(streamID, pan);
+        this.mPichMap.put(streamID, pitch);
+        
         // record stream id
         ArrayList<Integer> streamIDs = this.mPathStreamIDsMap.get(path);
         if (streamIDs == null) {

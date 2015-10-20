@@ -281,6 +281,40 @@ public class Cocos2dxHelper {
         return Cocos2dxHelper.sCocos2dSound.getEffectsVolume();
     }
 
+
+/**/
+    public static float getEffectVolume(final int soundId)
+    {
+        return Cocos2dxHelper.sCocos2dSound.getEffectVolume(soundId);
+    }
+    public static float getEffectPitch  (final int soundId)
+    {
+        return Cocos2dxHelper.sCocos2dSound.getEffectPitch(soundId);
+    }
+    public static float getEffectPan    (final int soundId)
+    {
+        return Cocos2dxHelper.sCocos2dSound.getEffectPan(soundId);
+    }
+
+
+    public static void setEffectsVolume (final int soundId, final float volume) 
+    {
+        Cocos2dxHelper.sCocos2dSound.setEffectsVolume(soundId, volume);
+    }
+    public static void setEffectsPitch  (final int soundId, final float pitch)
+    {
+        Cocos2dxHelper.sCocos2dSound.setEffectsPitch(soundId, pitch);
+    }
+    public static void setEffectsPan    (final int soundId, final float pan) 
+    {
+        Cocos2dxHelper.sCocos2dSound.setEffectsPan(soundId, pan);
+    }
+    /**/
+
+
+
+
+
     public static void setEffectsVolume(final float volume) {
         Cocos2dxHelper.sCocos2dSound.setEffectsVolume(volume);
     }

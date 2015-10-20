@@ -500,74 +500,161 @@ void AndroidJavaEngine::unloadEffect(const char* filePath)
     }
 }
 
+
+
+
+/***/
+static float _jni_getEffectVolume(int soundId)
+{
+    cocos2d::JniMethodInfo methodInfo;
+    jfloat ret = -1.0;
+
+    if (!getJNIStaticMethodInfo(methodInfo, "getEffectVolume", "(I)F")) {
+    	LOGD("_jni_getEffectVolume %d v = %f ERROR?", soundId, ret);
+        return ret;
+    }
+    ret = methodInfo.env->CallStaticFloatMethod(methodInfo.classID, 
+        methodInfo.methodID,
+        soundId);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    LOGD("_jni_getEffectVolume %d v = %f", soundId, ret);
+    return ret;
+   
+}
+static float _jni_getEffectPitch(int soundId)
+{
+    cocos2d::JniMethodInfo methodInfo;
+    jfloat ret = -1.0;
+
+    if (!getJNIStaticMethodInfo(methodInfo, "getEffectsPitch", "(I)F")) {
+        return ret;
+    }
+    ret = methodInfo.env->CallStaticFloatMethod(methodInfo.classID, 
+        methodInfo.methodID,
+        soundId);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    return ret;
+   
+}
+
+static float _jni_getEffectPan(int soundId)
+{
+    cocos2d::JniMethodInfo methodInfo;
+    jfloat ret = -1.0;
+
+    if (!getJNIStaticMethodInfo(methodInfo, "getEffectPan", "(I)F")) {
+        return ret;
+    }
+    ret = methodInfo.env->CallStaticFloatMethod(methodInfo.classID, 
+        methodInfo.methodID,
+        soundId);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    return ret;
+   
+}
+
+static void _jni_setEffectsVolume(int soundId, float volume) {
+    cocos2d::JniMethodInfo methodInfo;
+
+    if (!getJNIStaticMethodInfo(methodInfo, "setEffectsVolume", "(IF)V")) {
+        return;
+    }
+
+    methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, 
+        soundId,
+        volume);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+}
+
+static void _jni_setEffectsPitch(int soundId, float pitch)
+{
+    cocos2d::JniMethodInfo methodInfo;
+
+    if (!getJNIStaticMethodInfo(methodInfo, "setEffectsPitch", "(IF)V")) {
+        return;
+    }
+
+    methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID,
+        soundId,
+        pitch);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+}
+
+static void _jni_setEffectsPan(int soundId, float pan) {
+    cocos2d::JniMethodInfo methodInfo;
+
+    if (!getJNIStaticMethodInfo(methodInfo, "setEffectsPan", "(IF)V")) {
+        return;
+    }
+
+    methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, 
+        soundId,
+        pan);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+}
+/**/
+
+
+
 void AndroidJavaEngine::setEffectVolume(unsigned int soundId, float volume)
 {
-    LOGD( "[AndroidJavaEngine::setEffectVolume] Method not implemented!!" );
-//    if (!_implementBaseOnAudioEngine)
-//    {
-//        _jni_setEffectsVolume(soundId, volume);
-//    }
+    if (!_implementBaseOnAudioEngine)
+    {
+        _jni_setEffectsVolume(soundId, volume);
+    }
 }
 
 void AndroidJavaEngine::setEffectPitch(unsigned int soundId, float pitch)
 {
-    LOGD( "[AndroidJavaEngine::setEffectPitch] Method not implemented!!" );
-//    if (!_implementBaseOnAudioEngine)
-//    {
-//        _jni_setEffectsPitch(soundId, pitch);
-//    }
+   if (!_implementBaseOnAudioEngine)
+    {
+        _jni_setEffectsPitch(soundId, pitch);
+    }
 }
 
 void AndroidJavaEngine::setEffectPan(unsigned int soundId, float pan)
 {
-    LOGD( "[AndroidJavaEngine::setEffectPan] Method not implemented!!" );
-//    if (!_implementBaseOnAudioEngine)
-//    {
-//        _jni_setEffectsPan(soundId, pan);
-//    }
+    if (!_implementBaseOnAudioEngine)
+    {
+        _jni_setEffectsPan(soundId, pan);
+    }
 }
 
 float AndroidJavaEngine::getEffectVolume(unsigned int soundId)
 {
-    LOGD( "[AndroidJavaEngine::getEffectVolume] Method not implemented!!" );
-    
-    return 0.0f;
-//    if (!_implementBaseOnAudioEngine)
-//    {
-//        return _jni_getEffectVolume(soundId);
-//    }
-//    else
-//    {
-//        return 0.0f;
-//    }
+
+	LOGD("AndroidJavaEngine::getEffectVolume %d", soundId);
+
+    if (!_implementBaseOnAudioEngine)
+    {
+        return _jni_getEffectVolume(soundId);
+    }
+    else
+    {
+        return 0.0f;
+    }
 }
 
 float AndroidJavaEngine::getEffectPitch(unsigned int soundId)
 {
-    LOGD( "[AndroidJavaEngine::getEffectPitch] Method not implemented!!" );
-    
-    return 0.0f;
-//    if (!_implementBaseOnAudioEngine)
-//    {
-//        return _jni_getEffectPitch(soundId);
-//    }
-//    else
-//    {
-//        return 0.0f;
-//    }
+    if (!_implementBaseOnAudioEngine)
+    {
+        return _jni_getEffectPitch(soundId);
+    }
+    else
+    {
+        return 0.0f;
+    }
 }
 
 float AndroidJavaEngine::getEffectPan(unsigned int soundId)
 {
-    LOGD( "[AndroidJavaEngine::getEffectPan] Method not implemented!!" );
-    
-    return 0.0f;
-//    if (!_implementBaseOnAudioEngine)
-//    {
-//        return _jni_getEffectPan(soundId);
-//    }
-//    else
-//    {
-//        return 0.0f;
-//    }
+    if (!_implementBaseOnAudioEngine)
+    {
+        return _jni_getEffectPan(soundId);
+    }
+    else
+    {
+        return 0.0f;
+    }
 }
