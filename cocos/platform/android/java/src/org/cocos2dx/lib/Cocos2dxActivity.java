@@ -188,6 +188,10 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     public static Context getContext() {
         return sContext;
     }
+    public Cocos2dxGLSurfaceView getGLSurfaceView(){
+        return  mGLSurfaceView;
+    }
+    
     
     public void setKeepScreenOn(boolean value) {
         final boolean newValue = value;
