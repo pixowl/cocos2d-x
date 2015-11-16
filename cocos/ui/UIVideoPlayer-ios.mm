@@ -121,6 +121,16 @@ using namespace cocos2d::experimental::ui;
     return false;
 }
 
+-(void) showControls
+{
+    self.moviePlayer.controlStyle = MPMovieControlStyleDefault;
+}
+
+-(void) hideControls
+{
+    self.moviePlayer.controlStyle = MPMovieControlStyleNone;
+}
+
 -(void) setURL:(int)videoSource :(std::string &)videoUrl
 {
     if (self.moviePlayer != nullptr) {
@@ -409,6 +419,16 @@ void VideoPlayer::setVisible(bool visible)
     {
         [((UIVideoViewWrapperIos*)_videoView) setVisible:visible];
     }
+}
+
+void VideoPlayer::showControls()
+{
+    [((UIVideoViewWrapperIos*)_videoView) showControls];
+}
+
+void VideoPlayer::hideControls()
+{
+    [((UIVideoViewWrapperIos*)_videoView) hideControls];
 }
 
 void VideoPlayer::addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)

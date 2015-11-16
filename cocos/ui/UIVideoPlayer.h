@@ -128,6 +128,9 @@ namespace experimental{
              * @return True if currently playing, false otherwise.
              */
             virtual bool isPlaying() const;
+            
+            void showControls();
+            void hideControls();
 
             /**
              * Causes the video player to keep aspect ratio or no when displaying the video.
