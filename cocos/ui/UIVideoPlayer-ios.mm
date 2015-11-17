@@ -123,11 +123,13 @@ using namespace cocos2d::experimental::ui;
 
 -(void) showControls
 {
+    [self.moviePlayer view].userInteractionEnabled = YES;
     self.moviePlayer.controlStyle = MPMovieControlStyleDefault;
 }
 
 -(void) hideControls
 {
+    [self.moviePlayer view].userInteractionEnabled = NO;
     self.moviePlayer.controlStyle = MPMovieControlStyleNone;
 }
 
