@@ -436,7 +436,7 @@ void VideoPlayer::hideControls()
 
 void VideoPlayer::setPauseable(bool pauseable)
 {
-    LOG("TODO: IMPLEMENT VideoPlayer::setPauseable");
+    //LOG("TODO: IMPLEMENT VideoPlayer::setPauseable");
 }
 
 
