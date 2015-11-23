@@ -73,6 +73,21 @@ void callVideoNonParameterFun(int index,const char* funName)
     }
 }
 
+
+void callVideoBoolFun(int index,const char* funName, bool value) {
+    JniMethodInfo t;
+    
+    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, funName, "(IZ)V")) {
+        t.env->CallStaticVoidMethod(t.classID, t.methodID, index, value);
+        
+        t.env->DeleteLocalRef(t.classID);
+    }
+}
+
+
+
+
+
 void removeVideoWidgetJNI(int index)
 {
     callVideoNonParameterFun(index,"removeVideoWidget");
@@ -122,6 +137,11 @@ void pauseVideoJNI(int index)
     callVideoNonParameterFun(index,"pauseVideo");
 }
 
+void setPauseableJNI(int index, bool pauseable)
+{
+	callVideoBoolFun(index,"setPauseable", pauseable);
+}
+
 void resumeVideoJNI(int index)
 {
     callVideoNonParameterFun(index,"resumeVideo");
@@ -145,13 +165,7 @@ void seekVideoToJNI(int index,int msec)
 
 void setVideoVisible(int index,bool visible)
 {
-    JniMethodInfo t;
-
-    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, "setVideoVisible", "(IZ)V")) {
-        t.env->CallStaticVoidMethod(t.classID, t.methodID, index, visible);
-
-        t.env->DeleteLocalRef(t.classID);
-    }
+	callVideoBoolFun(index,"setVideoVisible", visible);
 }
 
 void setVideoKeepRatioEnabled(int index,bool enabled)
@@ -403,6 +417,27 @@ void executeVideoCallback(int index,int event)
     if (it != s_allVideoPlayers.end())
     {
         s_allVideoPlayers[index]->onPlayEvent(event);
+    }
+}
+
+
+void VideoPlayer::showControls()
+{
+   // [self.moviePlayer view].userInteractionEnabled = YES;
+    //self.moviePlayer.controlStyle = MPMovieControlStyleDefault;
+    
+}
+
+void VideoPlayer::hideControls()
+{
+   // [self.moviePlayer view].userInteractionEnabled = NO;
+   // self.moviePlayer.controlStyle = MPMovieControlStyleNone;
+}
+void VideoPlayer::setPauseable(bool pauseable)
+{
+    if (! _videoURL.empty())
+    {
+        setPauseableJNI(_videoPlayerIndex, pauseable);
     }
 }
 

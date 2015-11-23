@@ -65,6 +65,8 @@ public class Cocos2dxVideoHelper {
     private final static int VideoTaskRestart = 10;
     private final static int VideoTaskKeepRatio = 11;
     private final static int VideoTaskFullScreen = 12;
+    private final static int VideoTaskSetPauseble = 13;
+    
     final static int KeyEventBack = 1000;
     
     static class VideoHandler extends Handler{
@@ -139,6 +141,15 @@ public class Cocos2dxVideoHelper {
                     helper._setVideoVisible(msg.arg1, true);
                 } else {
                     helper._setVideoVisible(msg.arg1, false);
+                }
+                break;
+            }
+            case VideoTaskSetPauseble: {
+                Cocos2dxVideoHelper helper = mReference.get();
+                if (msg.arg2 == 1) {
+                    helper._setVideoPauseable(msg.arg1, true);
+                } else {
+                    helper._setVideoPauseable(msg.arg1, false);
                 }
                 break;
             }
@@ -402,6 +413,19 @@ public class Cocos2dxVideoHelper {
         mVideoHandler.sendMessage(msg);
     }
     
+    public static void setPauseable(int index, boolean pauseable) {
+        Message msg = new Message();
+        msg.what = VideoTaskSetPauseble;
+        msg.arg1 = index;
+        if (pauseable) {
+            msg.arg2 = 1;
+        } else {
+            msg.arg2 = 0;
+        }
+        
+        mVideoHandler.sendMessage(msg);
+    }
+    
     private void _setVideoVisible(int index, boolean visible) {
         Cocos2dxVideoView videoView = sVideoViews.get(index);
         if (videoView != null) {
@@ -413,6 +437,18 @@ public class Cocos2dxVideoHelper {
             }
         }
     }
+    
+    private void _setVideoPauseable(int index, boolean pauseable) {
+        Cocos2dxVideoView videoView = sVideoViews.get(index);
+        if (videoView != null) {
+            if (pauseable) {
+                videoView.setPauseable(true);
+            } else {
+                videoView.setPauseable(false);
+            }
+        }
+    }
+    
     
     public static void setVideoKeepRatioEnabled(int index, boolean enable) {
         Message msg = new Message();

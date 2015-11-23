@@ -131,6 +131,7 @@ namespace experimental{
             
             void showControls();
             void hideControls();
+            void setPauseable(bool);
 
             /**
              * Causes the video player to keep aspect ratio or no when displaying the video.

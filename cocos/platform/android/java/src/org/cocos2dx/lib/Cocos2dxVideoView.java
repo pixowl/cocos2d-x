@@ -96,6 +96,8 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
     
     private int mViewTag = 0;
     
+    private boolean mPauseable = true;
+    
     public Cocos2dxVideoView(Cocos2dxActivity activity,int tag) {
         super(activity);
         
@@ -197,15 +199,23 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         mTargetState  = STATE_IDLE;
     }
     
+    public void setPauseable(boolean pauseable)
+    {
+    	this.mPauseable = pauseable ;
+    }
+    
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP)
         {
-            if (isPlaying()) {
-                pause();
-            } else if(mCurrentState == STATE_PAUSED){
-                resume();
-            }
+        	if (mPauseable)
+        	{
+	            if (isPlaying()) {  
+	                pause();
+	            } else if(mCurrentState == STATE_PAUSED){
+	                resume();
+	            }
+        	}
         }
         
         return true;

@@ -433,6 +433,13 @@ void VideoPlayer::hideControls()
     [((UIVideoViewWrapperIos*)_videoView) hideControls];
 }
 
+
+void VideoPlayer::setPauseable(bool pauseable)
+{
+    LOG("TODO: IMPLEMENT VideoPlayer::setPauseable");
+}
+
+
 void VideoPlayer::addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)
 {
     _eventCallback = callback;
