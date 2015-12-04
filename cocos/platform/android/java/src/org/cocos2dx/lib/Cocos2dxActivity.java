@@ -256,17 +256,46 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "ACTIVITY ON RESUME");
+        mIsOnPause = false;
+    }
 
+    
+    
+    private void resumeGame() {
+        mIsRunning = true;
         Cocos2dxHelper.onResume();
         this.mGLSurfaceView.onResume();
+        Log.d(TAG, "RESUME COCOS2D");
+    }
+
+    private void pauseGame() {
+        mIsRunning = false;
+        Cocos2dxHelper.onPause();
+        this.mGLSurfaceView.onPause();
+        Log.d(TAG, "PAUSE COCOS2D");
+    }
+
+    private boolean mIsRunning = false;
+    private boolean mIsOnPause = false;
+
+    @Override
+    public void onWindowFocusChanged(final boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        Log.d(TAG, "ACTIVITY ON WINDOW FOCUS CHANGED " + (hasWindowFocus ? "true" : "false"));
+        if (hasWindowFocus && !mIsOnPause) {
+            resumeGame();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        
-        Cocos2dxHelper.onPause();
-        this.mGLSurfaceView.onPause();
+        Log.d(TAG, "ACTIVITY ON PAUSE");
+        mIsOnPause = true;
+        if (mIsRunning) {
+            pauseGame();
+        }
     }
     
     @Override
