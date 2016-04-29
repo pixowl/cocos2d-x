@@ -4,21 +4,12 @@
 #include "../BaseTest.h"
 #include "renderer/CCCustomCommand.h"
 #include "ui/CocosGUI.h"
+#include "extensions/cocos-ext.h"
 
 DEFINE_TEST_SUITE(NewLabelTests);
 
 class AtlasDemoNew : public TestCase
 {
-};
-
-class LabelTTFAlignmentNew : public AtlasDemoNew
-{
-public:
-    CREATE_FUNC(LabelTTFAlignmentNew);
-
-    LabelTTFAlignmentNew();
-    virtual std::string title() const override;
-    virtual std::string subtitle() const override;
 };
 
 class LabelFNTColorAndOpacity : public AtlasDemoNew
@@ -80,6 +71,17 @@ public:
     virtual std::string subtitle() const override;
 };
 
+class LabelFNTOpacity : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelFNTOpacity);
+
+    LabelFNTOpacity();
+    virtual std::string title() const override;
+
+    virtual std::string subtitle() const override;
+};
+
 class LabelFNTHundredLabels : public AtlasDemoNew
 {
 public:
@@ -130,26 +132,6 @@ public:
     CREATE_FUNC(LabelFNTGlyphDesigner);
 
     LabelFNTGlyphDesigner();
-    virtual std::string title() const override;
-    virtual std::string subtitle() const override;
-};
-
-class LabelTTFUnicodeChinese : public AtlasDemoNew
-{
-public:
-    CREATE_FUNC(LabelTTFUnicodeChinese);
-
-    LabelTTFUnicodeChinese();
-    virtual std::string title() const override;
-    virtual std::string subtitle() const override;
-};
-
-class LabelFNTUnicodeChinese : public AtlasDemoNew
-{
-public:
-    CREATE_FUNC(LabelFNTUnicodeChinese);
-
-    LabelFNTUnicodeChinese();
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
 };
@@ -267,7 +249,6 @@ public:
 private:
 };
 
-
 class LabelTTFFontsTestNew : public AtlasDemoNew
 {
 public:
@@ -277,20 +258,6 @@ public:
 
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
-};
-
-
-class LabelBMFontTestNew : public AtlasDemoNew
-{
-public:
-    CREATE_FUNC(LabelBMFontTestNew);
-
-    LabelBMFontTestNew();
-
-    virtual std::string title() const override;
-    virtual std::string subtitle() const override;
-
-private:
 };
 
 class LabelFontDefTestNew : public AtlasDemoNew
@@ -417,7 +384,6 @@ public:
     CREATE_FUNC(LabelAlignmentTest);
 
     LabelAlignmentTest();
-    virtual ~LabelAlignmentTest();
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
 private:
@@ -427,11 +393,8 @@ private:
     void  setAlignmentTop(cocos2d::Ref* sender);
     void  setAlignmentMiddle(cocos2d::Ref* sender);
     void  setAlignmentBottom(cocos2d::Ref* sender);
-    const char* getCurrentAlignment();
 
     cocos2d::Label* _label;
-    cocos2d::TextHAlignment _horizAlign;
-    cocos2d::TextVAlignment _vertAlign;
 };
 
 class LabelIssue4428Test : public AtlasDemoNew
@@ -598,15 +561,198 @@ public:
     virtual std::string subtitle() const override;
 };
 
+class LabelAddChildTest : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelAddChildTest);
+
+    LabelAddChildTest();
+
+    virtual std::string title() const override;
+};
+
 class LabelIssue12775Test : public AtlasDemoNew
 {
 public:
     CREATE_FUNC(LabelIssue12775Test);
-    
+
     LabelIssue12775Test();
-    
+
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
 };
 
+class LabelIssue11585Test : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelIssue11585Test);
+
+    LabelIssue11585Test();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelFullTypeFontTest : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelFullTypeFontTest);
+
+    LabelFullTypeFontTest();
+
+    virtual std::string title() const override;
+};
+
+class LabelIssue10688Test : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelIssue10688Test);
+
+    LabelIssue10688Test();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelIssue13202Test : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelIssue13202Test);
+
+    LabelIssue13202Test();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelIssue9500Test : public AtlasDemoNew
+{
+public:
+    CREATE_FUNC(LabelIssue9500Test);
+
+    LabelIssue9500Test();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelLayoutBaseTest : public AtlasDemoNew
+{
+public:
+    LabelLayoutBaseTest();
+    void updateDrawNodeSize(const cocos2d::Size &drawNodeSize);
+    cocos2d::extension::ControlStepper* makeControlStepper();
+    void valueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
+
+protected:
+    void  setAlignmentLeft(cocos2d::Ref* sender);
+    void  setAlignmentCenter(cocos2d::Ref* sender);
+    void  setAlignmentRight(cocos2d::Ref* sender);
+    void  setAlignmentTop(cocos2d::Ref* sender);
+    void  setAlignmentMiddle(cocos2d::Ref* sender);
+    void  setAlignmentBottom(cocos2d::Ref* sender);
+    
+    void initWrapOption(const cocos2d::Size& size);
+    void initToggleLabelTypeOption(const cocos2d::Size& size);
+    void initAlignmentOption(const cocos2d::Size& size);
+    void initFontSizeChange(const cocos2d::Size& size);
+    void initSliders(const cocos2d::Size& size);
+    void initTestLabel(const cocos2d::Size& size);
+    void initDrawNode(const cocos2d::Size& size);
+    cocos2d::DrawNode* _drawNode;
+    cocos2d::Label* _label;
+    int _labelType;
+};
+
+class LabelWrapByWordTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelWrapByWordTest);
+
+    LabelWrapByWordTest();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelWrapByCharTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelWrapByCharTest);
+
+    LabelWrapByCharTest();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelShrinkByWordTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelShrinkByWordTest);
+
+    LabelShrinkByWordTest();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelShrinkByCharTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelShrinkByCharTest);
+
+    LabelShrinkByCharTest();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelResizeTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelResizeTest);
+
+    LabelResizeTest();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelToggleTypeTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelToggleTypeTest);
+
+    LabelToggleTypeTest();
+    void initToggleCheckboxes();
+    void onChangedRadioButtonSelect(cocos2d::ui::RadioButton* radioButton,cocos2d::ui::RadioButton::EventType type);
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelSystemFontTest : public LabelLayoutBaseTest
+{
+public:
+    CREATE_FUNC(LabelSystemFontTest);
+
+    LabelSystemFontTest();
+    void initToggleCheckboxes();
+    void onChangedRadioButtonSelect(cocos2d::ui::RadioButton* radioButton,cocos2d::ui::RadioButton::EventType type);
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class LabelCharMapFontTest : public LabelSystemFontTest
+{
+public:
+    CREATE_FUNC(LabelCharMapFontTest);
+
+    LabelCharMapFontTest();
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
 #endif

@@ -273,9 +273,10 @@ bool JSB_glGetActiveAttrib(JSContext *cx, uint32_t argc, jsval *vp)
     JS::RootedObject object(cx, JS_NewObject(cx, NULL, JS::NullPtr(), JS::NullPtr() ));
     JSB_PRECONDITION2(ok, cx, false, "Error creating JS Object");
 
+    JS::RootedValue jsname(cx, charptr_to_jsval(cx, buffer));
     if (!JS_DefineProperty(cx, object, "size", (int32_t)size, JSPROP_ENUMERATE | JSPROP_PERMANENT) ||
         !JS_DefineProperty(cx, object, "type", (int32_t)type, JSPROP_ENUMERATE | JSPROP_PERMANENT) ||
-        !JS_DefineProperty(cx, object, "name", JS::RootedValue(cx, charptr_to_jsval(cx, buffer)), JSPROP_ENUMERATE | JSPROP_PERMANENT) )
+        !JS_DefineProperty(cx, object, "name", jsname, JSPROP_ENUMERATE | JSPROP_PERMANENT) )
         return false;
 
     retval = OBJECT_TO_JSVAL(object);
@@ -317,9 +318,10 @@ bool JSB_glGetActiveUniform(JSContext *cx, uint32_t argc, jsval *vp)
     JS::RootedObject object(cx, JS_NewObject(cx, NULL, JS::NullPtr(), JS::NullPtr() ));
     JSB_PRECONDITION2(ok, cx, false, "Error creating JS Object");
 
+    JS::RootedValue jsname(cx, charptr_to_jsval(cx, buffer));
     if (!JS_DefineProperty(cx, object, "size", (int32_t)size, JSPROP_ENUMERATE | JSPROP_PERMANENT) ||
         !JS_DefineProperty(cx, object, "type", (int32_t)type, JSPROP_ENUMERATE | JSPROP_PERMANENT) ||
-        !JS_DefineProperty(cx, object, "name", JS::RootedValue(cx, charptr_to_jsval(cx, buffer)), JSPROP_ENUMERATE | JSPROP_PERMANENT) )
+        !JS_DefineProperty(cx, object, "name", jsname, JSPROP_ENUMERATE | JSPROP_PERMANENT) )
         return false;
 
     retval = OBJECT_TO_JSVAL(object);
@@ -431,13 +433,30 @@ bool JSB_glGetUniformfv(JSContext *cx, uint32_t argc, jsval *vp)
 
     JSB_PRECONDITION2(ok, cx, false, "JSB_glGetUniformfv: Error processing arguments");
 
+    GLint activeUniforms;
+    glGetProgramiv(arg0, GL_ACTIVE_UNIFORMS, &activeUniforms);
+    
     GLsizei length;
     glGetProgramiv(arg0, GL_ACTIVE_UNIFORM_MAX_LENGTH, &length);
     GLchar* namebuffer = new GLchar[length+1];
     GLint size = -1;
     GLenum type = -1;
 
-    glGetActiveUniform(arg0, arg1, length, NULL, &size, &type, namebuffer);
+    bool isLocationFound = false;
+    for(int i = 0; i  <  activeUniforms; ++i)
+    {
+        glGetActiveUniform(arg0, i, length, NULL, &size, &type, namebuffer);
+        if(arg1 == glGetUniformLocation(arg0, namebuffer))
+        {
+            isLocationFound = true;
+            break;
+        }
+    }
+    if(!isLocationFound)
+    {
+        size = -1;
+        type = -1;
+    }
     CC_SAFE_DELETE_ARRAY(namebuffer);
 
     int usize = 0;

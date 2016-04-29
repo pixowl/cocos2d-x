@@ -36,10 +36,10 @@ public:
 
     virtual bool init() override;
     
-    virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox* editBox);
-    virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox* editBox);
-    virtual void editBoxTextChanged(cocos2d::ui::EditBox* editBox, const std::string& text);
-    virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
+    virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox* editBox)override;
+    virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox* editBox)override;
+    virtual void editBoxTextChanged(cocos2d::ui::EditBox* editBox, const std::string& text)override;
+    virtual void editBoxReturn(cocos2d::ui::EditBox* editBox)override;
 
     
 protected:
@@ -47,6 +47,7 @@ protected:
     cocos2d::ui::EditBox* _editName;
     cocos2d::ui::EditBox* _editPassword;
     cocos2d::ui::EditBox* _editEmail;
+    cocos2d::Node* _editEmailParent;
 };
 
 #endif /* defined(__cocos2d_tests__UIEditBoxTest__) */

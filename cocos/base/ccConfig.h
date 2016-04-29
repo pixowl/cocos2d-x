@@ -48,7 +48,7 @@ THE SOFTWARE.
 
 /** @def CC_ENABLE_GL_STATE_CACHE
  * If enabled, cocos2d will maintain an OpenGL state cache internally to avoid unnecessary switches.
- * In order to use them, you have to use the following functions, instead of the the GL ones:
+ * In order to use them, you have to use the following functions, instead of the GL ones:
  *  - ccGLUseProgram() instead of glUseProgram().
  *  - GL::deleteProgram() instead of glDeleteProgram().
  *  - GL::blendFunc() instead of glBlendFunc().
@@ -195,6 +195,17 @@ THE SOFTWARE.
 #define CC_SPRITE_DEBUG_DRAW 0
 #endif
 
+/** @def CC_LABEL_DEBUG_DRAW
+* If enabled, all subclasses of Label will draw a bounding box.
+* Useful for debugging purposes only. It is recommended to leave it disabled.
+* To enable set it to a value different than 0. Disabled by default:
+* 0 -- disabled
+* 1 -- draw bounding box
+*/
+#ifndef CC_LABEL_DEBUG_DRAW
+#define CC_LABEL_DEBUG_DRAW 0
+#endif
+
 /** @def CC_SPRITEBATCHNODE_DEBUG_DRAW
  * If enabled, all subclasses of Sprite that are rendered using an SpriteBatchNode draw a bounding box.
  * Useful for debugging purposes only. It is recommended to leave it disabled.
@@ -324,7 +335,11 @@ THE SOFTWARE.
  * protected by default.
  */
 #ifndef CC_CONSTRUCTOR_ACCESS
-#define CC_CONSTRUCTOR_ACCESS public
+  #ifdef CC_ENABLE_SCRIPT_BINDING
+    #define CC_CONSTRUCTOR_ACCESS public
+  #else
+    #define CC_CONSTRUCTOR_ACCESS protected
+  #endif
 #endif
 
 /** @def CC_ENABLE_ALLOCATOR

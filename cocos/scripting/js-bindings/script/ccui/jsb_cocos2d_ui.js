@@ -28,6 +28,18 @@
 
 var ccui = ccui || {};
 
+cc.EditBox = ccui.EditBox;
+delete ccui.EditBox;
+
+cc.Scale9Sprite = ccui.Scale9Sprite;
+
+// GUI
+/**
+ * @type {Object}
+ * UI Helper
+ */
+ccui.helper = ccui.Helper;
+
 // =====================Constants=====================
 
 /*
@@ -236,6 +248,12 @@ ccui.PageView.EVENT_TURNING = 0;
 //PageView touch direction
 ccui.PageView.TOUCH_DIR_LEFT = 0;
 ccui.PageView.TOUCH_DIR_RIGHT = 1;
+ccui.PageView.TOUCH_DIR_UP = 2;
+ccui.PageView.TOUCH_DIR_DOWN = 3;
+
+//PageView direction
+ccui.PageView.DIRECTION_HORIZONTAL = 0;
+ccui.PageView.DIRECTION_VERTICAL = 1;
 
 /*
  * UIButton
@@ -296,6 +314,9 @@ ccui.LoadingBar.RENDERER_ZORDER = -1;
  */
 //Slider event type
 ccui.Slider.EVENT_PERCENT_CHANGED = 0;
+ccui.Slider.EVENT_SLIDEBALL_DOWN = 1;
+ccui.Slider.EVENT_SLIDEBALL_UP = 2;
+ccui.Slider.EVENT_SLIDEBALL_CANCEL = 3;
 
 //Render zorder
 ccui.Slider.BASEBAR_RENDERER_ZORDER = -3;
@@ -328,6 +349,12 @@ ccui.TextField.EVENT_DELETE_BACKWARD = 3;
 
 ccui.TextField.RENDERER_ZORDER = -1;
 
+/*
+ * UIRadioButton
+ */
+ccui.RadioButton.EVENT_SELECTED = 0;
+ccui.RadioButton.EVENT_UNSELECTED = 1;
+ccui.RadioButtonGroup.EVENT_SELECT_CHANGED = 0;
 
 /*
  * UIMargin
@@ -480,3 +507,33 @@ if (ccui.VideoPlayer)
 ccui.Widget.prototype.addNode = ccui.Widget.prototype.addChild;
 ccui.Widget.prototype.getSize = ccui.Widget.prototype.getContentSize;
 ccui.Widget.prototype.setSize = ccui.Widget.prototype.setContentSize;
+
+/*
+ * UIWidget's event listeners wrapper
+ */
+ccui.Widget.prototype._addTouchEventListener = ccui.Widget.prototype.addTouchEventListener;
+ccui.Widget.prototype.addTouchEventListener = function (selector, target) {
+    if (target === undefined)
+        this._addTouchEventListener(selector);
+    else
+        this._addTouchEventListener(selector.bind(target));
+};
+
+function _ui_addEventListener(selector, target) {
+    if (target === undefined)
+        this._addEventListener(selector);
+    else
+        this._addEventListener(selector.bind(target));
+}
+function _ui_applyEventListener(ctor) {
+    var proto = ctor.prototype;
+    proto._addEventListener = proto.addEventListener;
+    proto.addEventListener = _ui_addEventListener;
+}
+
+_ui_applyEventListener(ccui.CheckBox);
+_ui_applyEventListener(ccui.Slider);
+_ui_applyEventListener(ccui.TextField);
+_ui_applyEventListener(ccui.PageView);
+_ui_applyEventListener(ccui.ScrollView);
+_ui_applyEventListener(ccui.ListView);

@@ -50,6 +50,9 @@
     <ClCompile Include="..\auto\jsb_cocos2dx_auto.cpp">
       <Filter>auto</Filter>
     </ClCompile>
+    <ClCompile Include="..\auto\jsb_cocos2dx_audioengine_auto.cpp">
+      <Filter>auto</Filter>
+    </ClCompile>
     <ClCompile Include="..\manual\js_manual_conversions.cpp">
       <Filter>manual</Filter>
     </ClCompile>
@@ -161,9 +164,18 @@
     <ClCompile Include="..\manual\navmesh\jsb_cocos2dx_navmesh_conversions.cpp">
       <Filter>manual\navmesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\manual\component\CCComponentJS.cpp">
+      <Filter>manual</Filter>
+    </ClCompile>
+    <ClCompile Include="..\manual\js_module_register.cpp">
+      <Filter>manual</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\auto\jsb_cocos2dx_auto.hpp">
+      <Filter>auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\auto\jsb_cocos2dx_audioengine_auto.hpp">
       <Filter>auto</Filter>
     </ClInclude>
     <ClInclude Include="..\manual\js_bindings_opengl.h">
@@ -297,6 +309,15 @@
     </ClInclude>
     <ClInclude Include="..\manual\navmesh\jsb_cocos2dx_navmesh_conversions.h">
       <Filter>manual\navmesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\manual\component\CCComponentJS.h">
+      <Filter>auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\manual\js_module_register.h">
+      <Filter>manual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\manual\js-BindingsExport.h">
+      <Filter>manual</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -34,9 +34,6 @@ THE SOFTWARE.
 #include "base/CCRef.h"
 #include "math/CCGeometry.h"
 #include "base/ccTypes.h"
-#ifdef EMSCRIPTEN
-#include "CCGLBufferedNode.h"
-#endif // EMSCRIPTEN
 
 NS_CC_BEGIN
 
@@ -68,9 +65,6 @@ class GLProgram;
 * Be aware that the content of the generated textures will be upside-down!
 */
 class CC_DLL Texture2D : public Ref
-#ifdef EMSCRIPTEN
-, public GLBufferedNode
-#endif // EMSCRIPTEN
 {
 public:
     /** @typedef Texture2D::PixelFormat
@@ -118,7 +112,7 @@ public:
         ATC_RGB,
         //! ATITC-compressed texture: ATC_EXPLICIT_ALPHA
         ATC_EXPLICIT_ALPHA,
-        //! ATITC-compresed texture: ATC_INTERPOLATED_ALPHA
+        //! ATITC-compressed texture: ATC_INTERPOLATED_ALPHA
         ATC_INTERPOLATED_ALPHA,
         //! Default texture format: AUTO
         DEFAULT = AUTO,
@@ -211,7 +205,7 @@ public:
      */
     virtual ~Texture2D();
     /**
-     Get texutre name, dimensions and coordinates message by a string.
+     Get texture name, dimensions and coordinates message by a string.
      * @js NA
      * @lua NA
      */
@@ -412,6 +406,7 @@ public:
     /** Get a shader program from the texture.*/
     GLProgram* getGLProgram() const;
 
+    std::string getPath()const { return _filePath; }
 
 public:
     /** Get pixel info map, the key-value pairs is PixelFormat and PixelFormatInfo.*/
@@ -546,6 +541,9 @@ protected:
     friend class SpriteFrameCache;
     friend class TextureCache;
     friend class ui::Scale9Sprite;
+
+    bool _valid;
+    std::string _filePath;
 };
 
 

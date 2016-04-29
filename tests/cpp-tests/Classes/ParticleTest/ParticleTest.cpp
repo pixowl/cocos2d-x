@@ -1,5 +1,6 @@
 #include "ParticleTest.h"
 #include "../testResource.h"
+#include "editor-support/cocostudio/CocosStudioExtension.h"
 
 USING_NS_CC;
 
@@ -1316,7 +1317,7 @@ void ParticleReorder::reorderParticles(float dt)
 class RainbowEffect : public ParticleSystemQuad
 {
 public:
-    bool init();
+    bool init()override;
     virtual bool initWithTotalParticles(int numberOfParticles) override;
     virtual void update(float dt) override;
 };

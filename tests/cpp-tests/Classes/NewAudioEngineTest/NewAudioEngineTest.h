@@ -23,7 +23,6 @@
  ****************************************************************************/
 
 #include "platform/CCPlatformConfig.h"
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
 #ifndef __NEWAUDIOENGINE_TEST_H_
 #define __NEWAUDIOENGINE_TEST_H_
@@ -143,5 +142,25 @@ private:
     
 };
 
+class AudioLoadTest : public AudioEngineTestDemo
+{
+public:
+    CREATE_FUNC(AudioLoadTest);
+
+    virtual bool init() override;
+
+    virtual std::string title() const override;
+};
+
+class AudioIssue11143Test : public AudioEngineTestDemo
+{
+public:
+    CREATE_FUNC(AudioIssue11143Test);
+
+    virtual bool init() override;
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
 #endif /* defined(__NEWAUDIOENGINE_TEST_H_) */
-#endif
