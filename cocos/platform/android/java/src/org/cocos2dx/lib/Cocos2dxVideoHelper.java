@@ -34,6 +34,7 @@ import android.os.Message;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 public class Cocos2dxVideoHelper {
 
@@ -222,8 +223,10 @@ public class Cocos2dxVideoHelper {
         FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
+        // PXLHACK: we send the video view below
         mLayout.addView(videoView, lParams);
-        videoView.setZOrderOnTop(true);
+        //videoView.setZOrderOnTop(true);
+        mActivity.getGLSurfaceView().bringToFront();
         videoView.setOnCompletionListener(videoEventListener);
     }
     

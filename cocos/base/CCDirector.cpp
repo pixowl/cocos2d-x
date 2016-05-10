@@ -399,6 +399,7 @@ void Director::setOpenGLView(GLView *openGLView)
         }
         
         _defaultFBO = experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
+        _defaultFBO->setClearColor(cocos2d::Color4F(0.0,0.0,0.0,0.0)); // PXLHACK: we send the video view below. here we set the clear color to transparent
         _defaultFBO->retain();
     }
 }
