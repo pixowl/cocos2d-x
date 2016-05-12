@@ -45,6 +45,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.opengl.GLSurfaceView;
+import android.view.View;
 
 public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelperListener {
     // ===========================================================
@@ -279,12 +280,17 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     private boolean mIsRunning = false;
     private boolean mIsOnPause = false;
 
+    public static native void focusChanged( boolean hasFocus );
+
     @Override
     public void onWindowFocusChanged(final boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        Log.d(TAG, "ACTIVITY ON WINDOW FOCUS CHANGED " + (hasWindowFocus ? "true" : "false"));
-        if (hasWindowFocus && !mIsOnPause) {
-            resumeGame();
+        if( hasWindowFocus ) setFullscreen();
+
+        focusChanged( hasWindowFocus );
+        Log.d(TAG, "Cocos2dxActivity.onWindowFocusChanged hasWindowFocus:" + (hasWindowFocus ? "true" : "false") + " mIsOnPause:" + (mIsOnPause ? "true" : "false"));
+        if (hasWindowFocus /*&& !mIsOnPause*/) {
+        	resumeGame();
         }
     }
 
@@ -298,6 +304,29 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         }
     }
     
+    protected void setFullscreen() {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= 16) 
+            {
+                getGLSurfaceView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION     |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN          |
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY    | 
+                    0);
+
+            } 
+            else 
+            {
+                getGLSurfaceView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | 0);
+            }
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
