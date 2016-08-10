@@ -1,5 +1,7 @@
 #ifndef __CURL_CURLRULES_H
 #define __CURL_CURLRULES_H
+#include "curlbuild-64.h"
+
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -140,7 +142,7 @@
 
 typedef char
   __curl_rule_01__
-    [CurlchkszEQ(long, CURL_SIZEOF_LONG)];
+    [CurlchkszEQ(long, 4)];
 
 /*
  * Verify that the size previously defined and expected for

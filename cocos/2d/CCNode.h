@@ -1674,24 +1674,24 @@ public:
      *
      * @param body A given physics body.
      */
-    void setPhysicsBody(PhysicsBody* body);
+//    void setPhysicsBody(PhysicsBody* body);
 
     /**
      * Get the PhysicsBody the sprite have.
      *
      * @return The PhysicsBody the sprite have.
      */
-    PhysicsBody* getPhysicsBody() const { return _physicsBody; }
+  //  PhysicsBody* getPhysicsBody() const { return _physicsBody; }
     
     /**
      * Remove this node from physics world. it will remove all the physics bodies in it's children too.
      */
-    void removeFromPhysicsWorld();
+   // void removeFromPhysicsWorld();
     
     /** 
      * Update the transform matrix from physics.
      */
-    void updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags);
+    //void updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags);
 
     /** 
      * Update physics body transform matrix.

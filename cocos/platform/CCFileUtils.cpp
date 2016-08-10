@@ -1346,6 +1346,20 @@ bool FileUtils::isPopupNotify() const
     return s_popupNotify;
 }
 
+std::string FileUtils::getFileExtension(const std::string& filePath) const
+{
+    std::string fileExtension;
+    size_t pos = filePath.find_last_of('.');
+    if (pos != std::string::npos)
+    {
+        fileExtension = filePath.substr(pos, filePath.length());
+
+        std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), ::tolower);
+    }
+
+    return fileExtension;
+}
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
 static std::wstring StringUtf8ToWideChar(const std::string& strUtf8)
 {
