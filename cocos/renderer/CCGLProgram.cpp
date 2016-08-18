@@ -382,12 +382,14 @@ void GLProgram::parseUniforms()
                     }
                     uniform.name = std::string(uniformName);
                     uniform.location = glGetUniformLocation(_program, uniformName);
+#if DEBUG 
                     GLenum __gl_error_code = glGetError();
                     if (__gl_error_code != GL_NO_ERROR)
                     {
                         CCLOG("error: 0x%x", (int)__gl_error_code);
                     }
                     assert(__gl_error_code == GL_NO_ERROR);
+#endif// DEBUG 
 
                     _userUniforms[uniform.name] = uniform;
                 }
