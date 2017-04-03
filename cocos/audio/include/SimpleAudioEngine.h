@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef _SIMPLE_AUDIO_ENGINE_H_
 #define _SIMPLE_AUDIO_ENGINE_H_
 
-#include "Export.h"
+#include "audio/include/Export.h"
 
 #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 #define CC_DEPRECATED_ATTRIBUTE __attribute__((deprecated))
@@ -248,18 +248,6 @@ public:
      * @param filePath The path of the effect file.
      */
     virtual void unloadEffect(const char* filePath);
-    
-    
-    //------------------------------------------------------------------------------------
-    // PIXOWL's EXTENSION
-    virtual void setEffectVolume(unsigned int soundId, float volume);
-    virtual void setEffectPitch(unsigned int soundId, float pitch);
-    virtual void setEffectPan(unsigned int soundId, float pan);
-    
-    virtual float getEffectVolume(unsigned int soundId);
-    virtual float getEffectPitch(unsigned int soundId);
-    virtual float getEffectPan(unsigned int soundId);
-    //------------------------------------------------------------------------------------
 
 protected:
     /**

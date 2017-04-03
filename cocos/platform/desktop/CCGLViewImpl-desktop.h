@@ -57,10 +57,13 @@ class CC_DLL GLViewImpl : public GLView
 {
 public:
     static GLViewImpl* create(const std::string& viewName);
-    static GLViewImpl* createWithRect(const std::string& viewName, Rect size, float frameZoomFactor = 1.0f);
-    static GLViewImpl* createWithFullScreen(const std::string& viewName);
-    static GLViewImpl* createWithFullScreen(const std::string& viewName, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
+    static GLViewImpl* create(const std::string& viewName, bool resizable);
+    static GLViewImpl* createWithRect(const std::string& viewName, Rect size, float frameZoomFactor = 1.0f, bool resizable = false);
+    static GLViewImpl* createWithFullScreen(const std::string& viewName, Rect size);
+	static GLViewImpl* createWithFullScreen(const std::string& viewName, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
 
+	void toggleWindowMode();
+	void setWindowRect(Rect size);
     /*
      *frameZoomFactor for frame. This method is for debugging big resolution (e.g.new ipad) app on desktop.
      */
@@ -115,7 +118,7 @@ protected:
     GLViewImpl(bool initglfw = true);
     virtual ~GLViewImpl();
 
-    bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor);
+    bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable);
     bool initWithFullScreen(const std::string& viewName);
     bool initWithFullscreen(const std::string& viewname, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
 
@@ -150,6 +153,10 @@ protected:
 
     float _mouseX;
     float _mouseY;
+
+	int windowed_xpos, windowed_ypos;
+	int windowed_width, windowed_height;
+	int windowed_minwidth, windowed_minheight;
 
     friend class GLFWEventHandler;
 

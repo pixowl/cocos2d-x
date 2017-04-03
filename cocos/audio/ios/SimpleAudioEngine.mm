@@ -23,8 +23,9 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "audio/include/SimpleAudioEngine.h"
-#include "SimpleAudioEngine_objc.h"
-#include "cocos2d.h"
+#include "audio/ios/SimpleAudioEngine_objc.h"
+#include "platform/CCFileUtils.h"
+
 USING_NS_CC;
 
 static void static_end()
@@ -87,7 +88,7 @@ static float static_getEffectsVolume()
 {
     return [[SimpleAudioEngine sharedEngine] effectsVolume];
 }
-
+     
 static void static_setEffectsVolume(float volume)
 {
     volume = MAX( MIN(volume, 1.0), 0 );
@@ -137,36 +138,6 @@ static void static_resumeAllEffects()
 static void static_stopAllEffects()
 {
     [[SimpleAudioEngine sharedEngine] stopAllEffects];
-}
-
-static void static_setEffectVolume(unsigned int uSoundId, float volume)
-{
-    [[SimpleAudioEngine sharedEngine] setEffect:uSoundId volume:volume];
-}
-
-static void static_setEffectPitch(unsigned int uSoundId, float pitch)
-{
-    [[SimpleAudioEngine sharedEngine] setEffect:uSoundId pitch:pitch];
-}
-
-static void static_setEffectPan(unsigned int uSoundId, float pan)
-{
-    [[SimpleAudioEngine sharedEngine] setEffect:uSoundId pan:pan];
-}
-
-static float static_getEffectVolume(unsigned int uSoundId)
-{
-    return [[SimpleAudioEngine sharedEngine] getEffectVolume:uSoundId];
-}
-
-static float static_getEffectPitch(unsigned int uSoundId)
-{
-    return [[SimpleAudioEngine sharedEngine] getEffectPitch:uSoundId];
-}
-
-static float static_getEffectPan(unsigned int uSoundId)
-{
-    return [[SimpleAudioEngine sharedEngine] getEffectPan:uSoundId];
 }
 
 namespace CocosDenshion {
@@ -319,36 +290,5 @@ void SimpleAudioEngine::stopAllEffects()
 {
     static_stopAllEffects();
 }
-
-void SimpleAudioEngine::setEffectVolume(unsigned int soundId, float volume)
-{
-    static_setEffectVolume(soundId, volume);
-}
-
-void SimpleAudioEngine::setEffectPitch(unsigned int soundId, float pitch)
-{
-    static_setEffectPitch(soundId, pitch);
-}
-
-void SimpleAudioEngine::setEffectPan(unsigned int soundId, float pan)
-{
-    static_setEffectPan(soundId, pan);
-}
-
-float SimpleAudioEngine::getEffectVolume(unsigned int soundId)
-{
-    return static_getEffectVolume(soundId);
-}
-
-float SimpleAudioEngine::getEffectPitch(unsigned int soundId)
-{
-    return static_getEffectPitch(soundId);
-}
-
-float SimpleAudioEngine::getEffectPan(unsigned int soundId)
-{
-    return static_getEffectPan(soundId);
-}
-
 
 } // endof namespace CocosDenshion {

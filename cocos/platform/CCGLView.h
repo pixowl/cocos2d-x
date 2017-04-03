@@ -86,6 +86,10 @@ struct GLContextAttrs
 
 NS_CC_BEGIN
 
+class Scene;
+class Renderer;
+class VRIRenderer;
+
 /**
  * @addtogroup platform
  * @{
@@ -106,8 +110,15 @@ public:
      */
     virtual ~GLView();
 
-    /** Force destroying EGL view, subclass must implement this method. */
+    /** Force destroying EGL view, subclass must implement this method. 
+     *
+     * @lua endToLua
+     */
     virtual void end() = 0;
+
+
+	/**  Used to switch between fullscreen and windowed modes */
+	virtual void toggleWindowMode() = 0;
 
     /** Get whether opengl render system is ready, subclass must implement this method. */
     virtual bool isOpenGLReady() = 0;
@@ -384,7 +395,20 @@ public:
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     virtual id getCocoaWindow() = 0;
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) */
-    
+
+    /**
+     * Renders a Scene with a Renderer
+     * This method is called dirctly by the Director
+     */
+    void renderScene(Scene* scene, Renderer* renderer);
+
+    /**
+     * Sets a VR renderer. 
+     * if `vrrenderer` is `nullptr` VR will be disabled
+     */
+    void setVR(VRIRenderer* vrrenderer);
+    VRIRenderer* getVR() const;
+
 protected:
     void updateDesignResolutionSize();
     
@@ -402,6 +426,9 @@ protected:
     float _scaleX;
     float _scaleY;
     ResolutionPolicy _resolutionPolicy;
+
+    // VR stuff
+    VRIRenderer* _vrImpl;
 };
 
 // end of platform group

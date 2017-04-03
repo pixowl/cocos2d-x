@@ -64,7 +64,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 
-#import "CCEAGLView-ios.h"
+#import "platform/ios/CCEAGLView-ios.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -72,9 +72,9 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 #import "deprecated/CCSet.h"
 #import "base/CCTouch.h"
 #import "base/CCIMEDispatcher.h"
-#import "CCGLViewImpl-ios.h"
-#import "CCES2Renderer-ios.h"
-#import "OpenGL_Internal-ios.h"
+#import "platform/ios/CCGLViewImpl-ios.h"
+#import "platform/ios/CCES2Renderer-ios.h"
+#import "platform/ios/OpenGL_Internal-ios.h"
 
 //CLASS IMPLEMENTATIONS:
 
@@ -266,7 +266,10 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     // Avoid flicker. Issue #350
     //[director performSelectorOnMainThread:@selector(drawScene) withObject:nil waitUntilDone:YES];
-    cocos2d::Director::getInstance()->drawScene();
+    if ([NSThread isMainThread])
+    {
+        cocos2d::Director::getInstance()->drawScene();
+    }
 }
 
 - (void) swapBuffers
@@ -412,8 +415,6 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesBegin(i, (intptr_t*)ids, xs, ys);
-    
-    [super touchesBegan:touches withEvent:event];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -429,7 +430,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
         ids[i] = touch;
         xs[i] = [touch locationInView: [touch view]].x * self.contentScaleFactor;;
         ys[i] = [touch locationInView: [touch view]].y * self.contentScaleFactor;;
-#ifdef __IPHONE_9_0 && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0
+#if defined(__IPHONE_9_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0)
         // running on iOS 9.0 or higher version
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0f) {
             fs[i] = touch.force;
@@ -441,7 +442,6 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesMove(i, (intptr_t*)ids, xs, ys, fs, ms);
-    [super touchesMoved:touches withEvent:event];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -460,8 +460,6 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesEnd(i, (intptr_t*)ids, xs, ys);
-    
-    [super touchesEnded:touches withEvent:event];
 }
     
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -480,8 +478,6 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     glview->handleTouchesCancel(i, (intptr_t*)ids, xs, ys);
-    
-    [super touchesCancelled:touches withEvent:event];
 }
 
 #pragma mark - UIView - Responder
@@ -745,8 +741,14 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
     double aniDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
     CGSize viewSize = self.frame.size;
+
+#if defined(CC_TARGET_OS_TVOS)
+    // statusBarOrientation not defined on tvOS, and also, orientation makes
+    // no sense on tvOS
+    begin.origin.y = viewSize.height - begin.origin.y - begin.size.height;
+    end.origin.y = viewSize.height - end.origin.y - end.size.height;
+#else
     CGFloat tmp;
-    
     switch (getFixedOrientation([[UIApplication sharedApplication] statusBarOrientation]))
     {
         case UIInterfaceOrientationPortrait:
@@ -788,6 +790,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
         default:
             break;
     }
+#endif
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     float scaleX = glview->getScaleX();
@@ -808,7 +811,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
         end.size.height -= offestY;
     }
     
-    // Convert to desigin coordinate
+    // Convert to design coordinate
     begin = CGRectApplyAffineTransform(begin, CGAffineTransformScale(CGAffineTransformIdentity, 1.0f/scaleX, 1.0f/scaleY));
     end = CGRectApplyAffineTransform(end, CGAffineTransformScale(CGAffineTransformIdentity, 1.0f/scaleX, 1.0f/scaleY));
 
@@ -835,7 +838,14 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
         //CGSize screenSize = self.window.screen.bounds.size;
         dispatcher->dispatchKeyboardDidShow(notiInfo);
         caretRect_ = end;
-        caretRect_.origin.y = viewSize.height - (caretRect_.origin.y + caretRect_.size.height + [UIFont smallSystemFontSize]);
+
+#if defined(CC_TARGET_OS_TVOS)
+        // smallSystemFontSize not available on TVOS
+        int fontSize = 12;
+#else
+        int fontSize = [UIFont smallSystemFontSize];
+#endif
+        caretRect_.origin.y = viewSize.height - (caretRect_.origin.y + caretRect_.size.height + fontSize);
         caretRect_.size.height = 0;
         isKeyboardShown_ = YES;
     }
@@ -851,6 +861,7 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
     }
 }
 
+#if !defined(CC_TARGET_OS_TVOS)
 UIInterfaceOrientation getFixedOrientation(UIInterfaceOrientation statusBarOrientation)
 {
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
@@ -859,6 +870,7 @@ UIInterfaceOrientation getFixedOrientation(UIInterfaceOrientation statusBarOrien
     }
     return statusBarOrientation;
 }
+#endif
 
 -(void) doAnimationWhenKeyboardMoveWithDuration:(float)duration distance:(float)dis
 {
@@ -875,7 +887,10 @@ UIInterfaceOrientation getFixedOrientation(UIInterfaceOrientation statusBarOrien
     dis *= glview->getScaleY();
     
     dis /= self.contentScaleFactor;
-    
+
+#if defined(CC_TARGET_OS_TVOS)
+    self.frame = CGRectMake(originalRect_.origin.x, originalRect_.origin.y - dis, originalRect_.size.width, originalRect_.size.height);
+#else
     switch (getFixedOrientation([[UIApplication sharedApplication] statusBarOrientation]))
     {
         case UIInterfaceOrientationPortrait:
@@ -897,6 +912,7 @@ UIInterfaceOrientation getFixedOrientation(UIInterfaceOrientation statusBarOrien
         default:
             break;
     }
+#endif
     
     [UIView commitAnimations];
 }

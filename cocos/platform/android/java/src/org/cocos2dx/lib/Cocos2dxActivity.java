@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,11 +39,10 @@ import android.preference.PreferenceManager.OnActivityResultListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-
-import com.chukong.cocosplay.client.CocosPlayClient;
 
 import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
 
@@ -229,10 +229,6 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     public static Context getContext() {
         return sContext;
     }
-    public Cocos2dxGLSurfaceView getGLSurfaceView(){
-        return  mGLSurfaceView;
-    }
-    
     
     public void setKeepScreenOn(boolean value) {
         final boolean newValue = value;
@@ -262,7 +258,8 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CocosPlayClient.init(this, false);
+
+        this.hideVirtualButton();
 
         onLoadNativeLibraries();
 
@@ -288,6 +285,8 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 
         Window window = this.getWindow();
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     //native method,call GLViewImpl::getGLContextAttrs() to get the OpenGL ES context attributions
@@ -305,44 +304,24 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     protected void onResume() {
     	Log.d(TAG, "onResume()");
         super.onResume();
-        Log.d(TAG, "ACTIVITY ON RESUME");
-        mIsOnPause = false;
+        this.hideVirtualButton();
        	resumeIfHasFocus();
     }
-
     
-    
-    private void resumeGame() {
-        mIsRunning = true;
-        Cocos2dxHelper.onResume();
-        this.mGLSurfaceView.onResume();
-        Log.d(TAG, "RESUME COCOS2D");
-    }
-
-    private void pauseGame() {
-        mIsRunning = false;
-        Cocos2dxHelper.onPause();
-        this.mGLSurfaceView.onPause();
-        Log.d(TAG, "PAUSE COCOS2D");
-    }
-
-    private boolean mIsRunning = false;
-    private boolean mIsOnPause = false;
-
     @Override
-    public void onWindowFocusChanged(/*final*/ boolean hasFocus) {
+    public void onWindowFocusChanged(boolean hasFocus) {
     	Log.d(TAG, "onWindowFocusChanged() hasFocus=" + hasFocus);
         super.onWindowFocusChanged(hasFocus);
         
         this.hasFocus = hasFocus;
-	if(!mIsOnPause) {
-	    resumeIfHasFocus();
-	}
+        resumeIfHasFocus();
     }
     
     private void resumeIfHasFocus() {
         if(hasFocus) {
-	    resumeGame();
+            this.hideVirtualButton();
+        	Cocos2dxHelper.onResume();
+        	mGLSurfaceView.onResume();
         }
     }
 
@@ -350,11 +329,8 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     protected void onPause() {
     	Log.d(TAG, "onPause()");
         super.onPause();
-        Log.d(TAG, "ACTIVITY ON PAUSE");
-        mIsOnPause = true;
-        if (mIsRunning) {
-            pauseGame();
-        }
+        Cocos2dxHelper.onPause();
+        mGLSurfaceView.onPause();
     }
     
     @Override
@@ -438,6 +414,20 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         glSurfaceView.setEGLConfigChooser(chooser);
 
         return glSurfaceView;
+    }
+
+    protected void hideVirtualButton() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
    private final static boolean isAndroidEmulator() {

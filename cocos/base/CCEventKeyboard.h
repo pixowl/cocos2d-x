@@ -225,11 +225,12 @@ public:
      * @param isPressed True if the key is pressed.
      * @js ctor
      */
-    EventKeyboard(KeyCode keyCode, bool isPressed);
+    EventKeyboard(KeyCode keyCode, bool isPressed, bool fromJoystick=false);
     
-private:
+public:
     KeyCode _keyCode;
     bool _isPressed;
+	bool _fromJoystick;
     
     friend class EventListenerKeyboard;
 };

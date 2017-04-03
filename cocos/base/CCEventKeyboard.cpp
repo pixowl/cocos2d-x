@@ -27,10 +27,11 @@
 
 NS_CC_BEGIN
 
-EventKeyboard::EventKeyboard(KeyCode keyCode, bool isPressed)
+EventKeyboard::EventKeyboard(KeyCode keyCode, bool isPressed, bool fromJoystick)
 : Event(Type::KEYBOARD)
 , _keyCode(keyCode)
 , _isPressed(isPressed)
+, _fromJoystick( fromJoystick )
 {}
 
 NS_CC_END

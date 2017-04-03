@@ -36,7 +36,7 @@ NS_CC_BEGIN
  * @{
  */
 
-class CC_DLL __Float : public Ref, public Clonable
+class CC_DLL __Float : public Ref
 {
 public:
     __Float(float v)
@@ -45,7 +45,7 @@ public:
 
     static __Float* create(float v)
     {
-        __Float* pRet = new __Float(v);
+        __Float* pRet = new (std::nothrow) __Float(v);
         if (pRet)
         {
             pRet->autorelease();
@@ -56,7 +56,7 @@ public:
     /* override functions */
     virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
     
-    __Float* clone() const
+    virtual __Float* clone() const
     {
         return __Float::create(_value);
     }

@@ -37,7 +37,7 @@ NS_CC_BEGIN
  * @{
  */
 
-class CC_DLL __Bool : public Ref, public Clonable
+class CC_DLL __Bool : public Ref
 {
 public:
     __Bool(bool v)
@@ -46,7 +46,7 @@ public:
 
     static __Bool* create(bool v)
     {
-        __Bool* pRet = new __Bool(v);
+        __Bool* pRet = new (std::nothrow) __Bool(v);
         if (pRet)
         {
             pRet->autorelease();
@@ -57,7 +57,7 @@ public:
     /* override functions */
     virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
 
-    __Bool* clone() const
+    virtual __Bool* clone() const
     {
         return __Bool::create(_value);
     }

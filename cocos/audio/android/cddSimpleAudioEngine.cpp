@@ -23,9 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "SimpleAudioEngine.h"
-#include "jni/cddandroidAndroidJavaEngine.h"
-#include "ccdandroidUtils.h"
+#include "audio/include/SimpleAudioEngine.h"
+#include "audio/android/jni/cddandroidAndroidJavaEngine.h"
+#include "audio/android/ccdandroidUtils.h"
 
 namespace CocosDenshion {
 
@@ -79,16 +79,4 @@ namespace CocosDenshion {
     void SimpleAudioEngine::stopAllEffects() { }
     void SimpleAudioEngine::preloadEffect(const char* pszFilePath) { }
     void SimpleAudioEngine::unloadEffect(const char* pszFilePath) { }
-    
-    //------------------------------------------------------------------------------------
-    // PIXOWL's EXTENSION
-    void SimpleAudioEngine::setEffectVolume(unsigned int soundId, float volume) {}
-    void SimpleAudioEngine::setEffectPitch(unsigned int soundId, float pitch) {}
-    void SimpleAudioEngine::setEffectPan(unsigned int soundId, float pan) {}
-    
-    float SimpleAudioEngine::getEffectVolume(unsigned int soundId) { return 0.0f; }
-    float SimpleAudioEngine::getEffectPitch(unsigned int soundId) { return 0.0f; }
-    float SimpleAudioEngine::getEffectPan(unsigned int soundId) { return 0.0f; }
-    //------------------------------------------------------------------------------------
-
 }

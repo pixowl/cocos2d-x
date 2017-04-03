@@ -139,6 +139,8 @@ void Widget::FocusNavigationController::removeKeyboardEventListener()
 Widget* Widget::_focusedWidget = nullptr;
 Widget::FocusNavigationController* Widget::_focusNavigationController = nullptr;
 
+bool Widget::s_anyHitted = false;
+
 Widget::Widget():
 _usingLayoutComponent(false),
 _unifySize(false),
@@ -783,6 +785,9 @@ bool Widget::onTouchBegan(Touch *touch, Event *unusedEvent)
             }
         }
     }
+
+	s_anyHitted = _hitted;
+
     if (!_hitted)
     {
         return false;
@@ -831,6 +836,8 @@ void Widget::onTouchMoved(Touch *touch, Event *unusedEvent)
 
 void Widget::onTouchEnded(Touch *touch, Event *unusedEvent)
 {
+	s_anyHitted = false;
+
     _touchEndPosition = touch->getLocation();
 
     /*
@@ -1242,6 +1249,8 @@ void Widget::copyProperties(Widget *widget)
     setFlippedY(widget->isFlippedY());
     setColor(widget->getColor());
     setOpacity(widget->getOpacity());
+    setCascadeColorEnabled(widget->isCascadeColorEnabled());
+    setCascadeOpacityEnabled(widget->isCascadeOpacityEnabled());
     _touchEventCallback = widget->_touchEventCallback;
     _touchEventListener = widget->_touchEventListener;
     _touchEventSelector = widget->_touchEventSelector;

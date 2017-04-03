@@ -34,8 +34,6 @@ import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.MediaController.MediaPlayerControl;
 
-import com.chukong.cocosplay.client.CocosPlayClient;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -95,8 +93,6 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
     protected int mFullScreenHeight = 0;
     
     private int mViewTag = 0;
-    
-    private boolean mPauseable = true;
     
     public Cocos2dxVideoView(Cocos2dxActivity activity,int tag) {
         super(activity);
@@ -199,23 +195,15 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         mTargetState  = STATE_IDLE;
     }
     
-    public void setPauseable(boolean pauseable)
-    {
-    	this.mPauseable = pauseable ;
-    }
-    
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP)
         {
-        	if (mPauseable)
-        	{
-	            if (isPlaying()) {  
-	                pause();
-	            } else if(mCurrentState == STATE_PAUSED){
-	                resume();
-	            }
-        	}
+            if (isPlaying()) {
+                pause();
+            } else if(mCurrentState == STATE_PAUSED){
+                resume();
+            }
         }
         
         return true;
@@ -229,10 +217,6 @@ public class Cocos2dxVideoView extends SurfaceView implements MediaPlayerControl
         if (path.startsWith(AssetResourceRoot)) {
             path = path.substring(AssetResourceRoot.length());
         }
-        if (CocosPlayClient.isEnabled() && !CocosPlayClient.isDemo()) {
-            CocosPlayClient.updateAssets(path);
-        }
-        CocosPlayClient.notifyFileLoaded(path);
         if (path.startsWith("/")) {
             mIsAssetRouse = false;
             setVideoURI(Uri.parse(path),null);

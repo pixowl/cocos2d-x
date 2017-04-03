@@ -22,7 +22,7 @@
  $Id$
  */
 
-#import "CocosDenshion.h"
+#import "audio/mac/CocosDenshion.h"
 
 ALvoid  alBufferDataStaticProc(const ALint bid, ALenum format, ALvoid* data, ALsizei size, ALsizei freq);
 ALvoid  alcMacOSXMixerOutputRateProc(const ALdouble value);
@@ -934,7 +934,7 @@ static BOOL _mixerRateSet = NO;
     CDLOGINFO(@"Denshion::CDSoundEngine _soundSourcePreRelease %i",soundSource->_sourceIndex);
     //Unlock the sound source's source
     [self _lockSource:soundSource->_sourceIndex lock:NO];
-}
+}    
 
 /**
  * Stop all sounds playing within a source group
@@ -1074,65 +1074,7 @@ static BOOL _mixerRateSet = NO;
         }    
     }    
 #endif    
-}
-
--(void)setSound:(ALuint)soundId volume:(float)volume
-{
-    if( !functioning_ )
-        return;
-    
-    alSourcef(soundId, AL_GAIN, volume);
-}
-
--(void)setSound:(ALuint)soundId pitch:(float)pitch
-{
-    if( !functioning_ )
-        return;
-    
-    alSourcef(soundId, AL_PITCH, pitch);
-}
-
--(void)setSound:(ALuint)soundId pan:(float)pan
-{
-    if( !functioning_ )
-        return;
-    
-    float sourcePosAL[] = {pan, 0.0f, 0.0f};//Set position - just using left and right panning
-    alSourcefv(soundId, AL_POSITION, sourcePosAL);
-}
-
--(float)getSoundVolume:(ALuint)soundId
-{
-    if( !functioning_ )
-        return 0.0f;
-    
-    float volume = 0.0f;
-    alGetSourcef(soundId, AL_GAIN, &volume);
-    
-    return volume;
-}
-
--(float)getSoundPitch:(ALuint)soundId
-{
-    if( !functioning_ )
-        return 0.0f;
-    
-    float pitch = 0.0f;
-    alGetSourcef(soundId, AL_PITCH, &pitch);
-    
-    return pitch;
-}
-
--(float)getSoundPan:(ALuint)soundId
-{
-    if( !functioning_ )
-        return 0.0f;
-    
-    float sourcePosAL[3];//Set position - just using left and right panning
-    alGetSourcefv(soundId, AL_POSITION, sourcePosAL);
-    
-    return sourcePosAL[0];
-}
+}    
 
 @end
 

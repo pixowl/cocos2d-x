@@ -38,12 +38,12 @@ NS_CC_BEGIN
  * @{
  */
 
-class CC_DLL __Integer : public Ref, public Clonable
+class CC_DLL __Integer : public Ref
 {
 public:
     static __Integer* create(int v)
     {
-        __Integer* pRet = new __Integer(v);
+        __Integer* pRet = new (std::nothrow) __Integer(v);
         pRet->autorelease();
         return pRet;
     }
@@ -65,7 +65,7 @@ public:
     virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
 
     // overrides
-    virtual __Integer* clone() const override
+    virtual __Integer* clone() const
     {
         return __Integer::create(_value);
     }

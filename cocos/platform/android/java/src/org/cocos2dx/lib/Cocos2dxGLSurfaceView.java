@@ -313,7 +313,6 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
         switch (pKeyCode) {
             case KeyEvent.KEYCODE_BACK:
                 Cocos2dxVideoHelper.mVideoHandler.sendEmptyMessage(Cocos2dxVideoHelper.KeyEventBack);
-                nativeBackKey();
             case KeyEvent.KEYCODE_MENU:
             case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_DPAD_RIGHT:
@@ -420,6 +419,4 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
         sb.append("]");
         Log.d(Cocos2dxGLSurfaceView.TAG, sb.toString());
     }
-    
-    private static native void nativeBackKey();
 }

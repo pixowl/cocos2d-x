@@ -173,7 +173,7 @@ public:
     Vec2 getStartLocationInView() const;
 
 
-private:
+public:
     MouseEventType _mouseEventType;
     int _mouseButton;
     float _x;

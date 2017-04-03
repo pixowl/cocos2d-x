@@ -71,7 +71,7 @@ Requirements:
 #import <OpenAL/alc.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <Foundation/Foundation.h>
-#import "CDConfig.h"
+#import "audio/ios/CDConfig.h"
 
 
 #if !defined(CD_DEBUG) || CD_DEBUG == 0
@@ -88,7 +88,7 @@ Requirements:
 #endif // CD_DEBUG
 
 
-#import "CDOpenALSupport.h"
+#import "audio/ios/CDOpenALSupport.h"
 
 //Tested source limit on 2.2.1 and 3.1.2 with up to 128 sources and appears to work. Older OS versions e.g 2.2 may support only 32
 #define CD_SOURCE_LIMIT 32 //Total number of sources we will ever want, may actually get less
@@ -283,18 +283,6 @@ typedef struct _sourceInfo {
 
 /** Used internally, never call unless you know what you are doing */
 -(void) _soundSourcePreRelease:(CDSoundSource *) soundSource;
-
-//-------------------------------------------------------------------------
-// Pixowl's Extension
--(void) setSound:(ALuint)sourceId volume:(float)volume;
--(void) setSound:(ALuint)sourceId pitch:(float)pitch;
--(void) setSound:(ALuint)sourceId pan:(float)pan;
-
--(float)getSoundVolume:(ALuint)soundId;
--(float)getSoundPitch:(ALuint)soundId;
--(float)getSoundPan:(ALuint)soundId;
-//-------------------------------------------------------------------------
-
 
 @end
 

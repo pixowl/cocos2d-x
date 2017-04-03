@@ -40,6 +40,7 @@ Generated Files
 AppPackages
 BundleArtifacts
 .vs/
+*.VC.db
 
 # Ignore files build by ndk and eclipse
 libs/
@@ -128,6 +129,8 @@ project.properties
 # Ignore prebuilt libraries folder
 /external/*
 !/external/config.json
+!/external/openssl
+!/external/glfw3/
 /templates/lua-template-runtime/runtime
 /v*-deps-*.zip
 /v*-lua-runtime-*.zip
@@ -149,3 +152,9 @@ tests/cpp-tests/Resources/audio
 /*/*/*/prebuilt-mk/Android.mk
 /*/*/*/*/prebuilt-mk/Android.mk
 *.xcscmblueprint
+tests/cpp-empty-test/proj.tizen/res/
+tests/cpp-tests/proj.tizen/res/
+tests/lua-empty-test/project/proj.tizen/res/
+tests/lua-tests/project/proj.tizen/res/
+build/cocos2d_libs.xcodeproj/
+build/cocos2d_tests.xcodeproj/

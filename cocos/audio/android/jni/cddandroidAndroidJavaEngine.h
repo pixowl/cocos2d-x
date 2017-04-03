@@ -25,7 +25,7 @@ THE SOFTWARE.
 #ifndef __CDDANDRIODANDROIDJAVAENGINE_H__
 #define __CDDANDRIODANDROIDJAVAENGINE_H__
 
-#include "SimpleAudioEngine.h"
+#include "audio/include/SimpleAudioEngine.h"
 #include "platform/android/jni/JniHelper.h"
 #include <list>
 
@@ -58,18 +58,6 @@ namespace CocosDenshion {
             virtual void stopAllEffects();
             virtual void preloadEffect(const char* filePath);
             virtual void unloadEffect(const char* filePath);
-            
-            //------------------------------------------------------------------------------------
-            // PIXOWL's EXTENSION
-            virtual void setEffectVolume(unsigned int soundId, float volume);
-            virtual void setEffectPitch(unsigned int soundId, float pitch);
-            virtual void setEffectPan(unsigned int soundId, float pan);
-            
-            virtual float getEffectVolume(unsigned int soundId);
-            virtual float getEffectPitch(unsigned int soundId);
-            virtual float getEffectPan(unsigned int soundId);
-            //------------------------------------------------------------------------------------
-
 
         private :
             bool _implementBaseOnAudioEngine;

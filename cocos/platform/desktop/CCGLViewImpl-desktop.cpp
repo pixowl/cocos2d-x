@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "CCGLViewImpl-desktop.h"
+#include "platform/desktop/CCGLViewImpl-desktop.h"
 
 #include <unordered_map>
 
@@ -37,7 +37,6 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "base/ccUTF8.h"
 #include "2d/CCCamera.h"
-#include "deprecated/CCString.h"
 
 NS_CC_BEGIN
 
@@ -300,19 +299,13 @@ GLViewImpl::~GLViewImpl()
 
 GLViewImpl* GLViewImpl::create(const std::string& viewName)
 {
-    auto ret = new (std::nothrow) GLViewImpl;
-    if(ret && ret->initWithRect(viewName, Rect(0, 0, 960, 640), 1)) {
-        ret->autorelease();
-        return ret;
-    }
-    CC_SAFE_DELETE(ret);
-    return nullptr;
+    return GLViewImpl::create(viewName, false);
 }
 
-GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
+GLViewImpl* GLViewImpl::create(const std::string& viewName, bool resizable)
 {
     auto ret = new (std::nothrow) GLViewImpl;
-    if(ret && ret->initWithRect(viewName, rect, frameZoomFactor)) {
+    if(ret && ret->initWithRect(viewName, Rect(0, 0, 960, 640), 1.0f, resizable)) {
         ret->autorelease();
         return ret;
     }
@@ -320,10 +313,22 @@ GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, f
     return nullptr;
 }
 
-GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
+GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable)
+{
+    auto ret = new (std::nothrow) GLViewImpl;
+    if(ret && ret->initWithRect(viewName, rect, frameZoomFactor, resizable)) {
+        ret->autorelease();
+        return ret;
+    }
+    CC_SAFE_DELETE(ret);
+    return nullptr;
+}
+
+GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, Rect size)
 {
     auto ret = new (std::nothrow) GLViewImpl();
     if(ret && ret->initWithFullScreen(viewName)) {
+		ret->setWindowRect(size);
         ret->autorelease();
         return ret;
     }
@@ -342,13 +347,13 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, const 
     return nullptr;
 }
 
-bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
+bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable)
 {
     setViewName(viewName);
 
     _frameZoomFactor = frameZoomFactor;
 
-    glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE,resizable?GL_TRUE:GL_FALSE);
     glfwWindowHint(GLFW_RED_BITS,_glContextAttrs.redBits);
     glfwWindowHint(GLFW_GREEN_BITS,_glContextAttrs.greenBits);
     glfwWindowHint(GLFW_BLUE_BITS,_glContextAttrs.blueBits);
@@ -357,9 +362,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glfwWindowHint(GLFW_STENCIL_BITS,_glContextAttrs.stencilBits);
 
     int needWidth = rect.size.width * _frameZoomFactor;
-    int neeHeight = rect.size.height * _frameZoomFactor;
+    int needHeight = rect.size.height * _frameZoomFactor;
 
-    _mainWindow = glfwCreateWindow(needWidth, neeHeight, _viewName.c_str(), _monitor, nullptr);
+    _mainWindow = glfwCreateWindow(needWidth, needHeight, _viewName.c_str(), _monitor, nullptr);
 
     if (_mainWindow == nullptr)
     {
@@ -386,16 +391,24 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     */
     int realW = 0, realH = 0;
     glfwGetWindowSize(_mainWindow, &realW, &realH);
+
+	//int realX = 0, realY = 0;
+	//glfwGetWindowPos(_mainWindow, &realX, &realY);
     if (realW != needWidth)
     {
         rect.size.width = realW / _frameZoomFactor;
     }
-    if (realH != neeHeight)
+    if (realH != needHeight)
     {
         rect.size.height = realH / _frameZoomFactor;
     }
 
+	windowed_minwidth = realW / 2;
+	windowed_minheight = realH / 2;
+
+
     glfwMakeContextCurrent(_mainWindow);
+	glfwSwapInterval(1);	//	Enable vsync
 
     glfwSetMouseButtonCallback(_mainWindow, GLFWEventHandler::onGLFWMouseCallBack);
     glfwSetCursorPosCallback(_mainWindow, GLFWEventHandler::onGLFWMouseMoveCallBack);
@@ -406,6 +419,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
     glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
     glfwSetWindowIconifyCallback(_mainWindow, GLFWEventHandler::onGLFWWindowIconifyCallback);
+
+	glfwSetWindowSizeLimits(_mainWindow, windowed_minwidth, windowed_minheight, GLFW_DONT_CARE, GLFW_DONT_CARE);
+	glfwSetWindowAspectRatio(_mainWindow, windowed_minwidth, windowed_minheight);
 
     setFrameSize(rect.size.width, rect.size.height);
 
@@ -438,7 +454,7 @@ bool GLViewImpl::initWithFullScreen(const std::string& viewName)
         return false;
 
     const GLFWvidmode* videoMode = glfwGetVideoMode(_monitor);
-    return initWithRect(viewName, Rect(0, 0, videoMode->width, videoMode->height), 1.0f);
+    return initWithRect(viewName, Rect(0, 0, videoMode->width, videoMode->height), 1.0f, true);
 }
 
 bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmode &videoMode, GLFWmonitor *monitor)
@@ -454,8 +470,65 @@ bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmo
     glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits);
     glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
     
-    return initWithRect(viewname, Rect(0, 0, videoMode.width, videoMode.height), 1.0f);
+    return initWithRect(viewname, Rect(0, 0, videoMode.width, videoMode.height), 1.0f, false);
 }
+
+
+void GLViewImpl::toggleWindowMode()
+{
+	if (glfwGetWindowMonitor(_mainWindow))
+	{
+		//	Go Windowed mode
+		glfwSetWindowMonitor(_mainWindow, NULL,
+			windowed_xpos, windowed_ypos,
+			windowed_width, windowed_height, 0);
+		glfwSetWindowSizeLimits(_mainWindow, windowed_minwidth, windowed_minheight, GLFW_DONT_CARE, GLFW_DONT_CARE);
+		glfwSetWindowAspectRatio(_mainWindow, windowed_minwidth, windowed_minheight );
+	}
+	else
+	{
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		if (monitor)
+		{
+			//	Go Full Screen
+			const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+			glfwGetWindowPos(_mainWindow, &windowed_xpos, &windowed_ypos);
+			glfwGetWindowSize(_mainWindow, &windowed_width, &windowed_height);
+			glfwSetWindowMonitor(_mainWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+		}
+	}
+}
+
+void GLViewImpl::setWindowRect(Rect rect)
+{
+	//	Initializes desired window size if starting fullscreen 
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	if (nullptr != monitor)
+	{
+		const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
+		int mWidth = videoMode->width;
+		int mHeight = videoMode->height;
+
+		while (rect.size.width > mWidth || rect.size.height > mHeight)
+		{
+			rect.size.width = rect.size.width / 2;
+			rect.size.height = rect.size.height / 2;
+		}
+
+		rect.origin.x = (mWidth - rect.size.width) / 2;
+		rect.origin.y = (mHeight - rect.size.height) / 2;
+	}
+
+	windowed_xpos = rect.origin.x;
+	windowed_ypos = rect.origin.y;
+	windowed_width = rect.size.width;
+	windowed_height = rect.size.height;
+	windowed_minwidth = rect.size.width/2;
+	windowed_minheight = rect.size.height/2;
+}
+
+
 
 bool GLViewImpl::isOpenGLReady()
 {
@@ -616,7 +689,14 @@ Rect GLViewImpl::getScissorRect() const
 
 void GLViewImpl::onGLFWError(int errorID, const char* errorDesc)
 {
-    _glfwError = StringUtils::format("GLFWError #%d Happen, %s", errorID, errorDesc);
+    if (_mainWindow)
+    {
+        _glfwError = StringUtils::format("GLFWError #%d Happen, %s", errorID, errorDesc);
+    }
+    else
+    {
+        _glfwError.append(StringUtils::format("GLFWError #%d Happen, %s\n", errorID, errorDesc));
+    }
     CCLOGERROR("%s", _glfwError.c_str());
 }
 
@@ -728,10 +808,27 @@ void GLViewImpl::onGLFWKeyCallback(GLFWwindow *window, int key, int scancode, in
         auto dispatcher = Director::getInstance()->getEventDispatcher();
         dispatcher->dispatchEvent(&event);
     }
-    
-    if (GLFW_RELEASE != action && g_keyCodeMap[key] == EventKeyboard::KeyCode::KEY_BACKSPACE)
+
+    if (GLFW_RELEASE != action)
     {
-        IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
+        switch (g_keyCodeMap[key])
+        {
+        case EventKeyboard::KeyCode::KEY_BACKSPACE:
+            IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
+            break;
+        case EventKeyboard::KeyCode::KEY_HOME:
+        case EventKeyboard::KeyCode::KEY_KP_HOME:
+        case EventKeyboard::KeyCode::KEY_DELETE:
+        case EventKeyboard::KeyCode::KEY_KP_DELETE:
+        case EventKeyboard::KeyCode::KEY_END:
+        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+        case EventKeyboard::KeyCode::KEY_ESCAPE:
+            IMEDispatcher::sharedDispatcher()->dispatchControlKey(g_keyCodeMap[key]);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -741,7 +838,23 @@ void GLViewImpl::onGLFWCharCallback(GLFWwindow *window, unsigned int character)
     std::string utf8String;
 
     StringUtils::UTF16ToUTF8( wcharString, utf8String );
-    IMEDispatcher::sharedDispatcher()->dispatchInsertText( utf8String.c_str(), utf8String.size() );
+    static std::set<std::string> controlUnicode = {
+        "\xEF\x9C\x80", // up
+        "\xEF\x9C\x81", // down
+        "\xEF\x9C\x82", // left
+        "\xEF\x9C\x83", // right
+        "\xEF\x9C\xA8", // delete
+        "\xEF\x9C\xA9", // home
+        "\xEF\x9C\xAB", // end
+        "\xEF\x9C\xAC", // pageup
+        "\xEF\x9C\xAD", // pagedown
+        "\xEF\x9C\xB9"  // clear
+    };
+    // Check for send control key
+    if (controlUnicode.find(utf8String) == controlUnicode.end())
+    {
+        IMEDispatcher::sharedDispatcher()->dispatchInsertText( utf8String.c_str(), utf8String.size() );
+    }
 }
 
 void GLViewImpl::onGLFWWindowPosCallback(GLFWwindow *windows, int x, int y)
@@ -780,22 +893,28 @@ void GLViewImpl::onGLFWframebuffersize(GLFWwindow* window, int w, int h)
 
 void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
 {
-    if (_resolutionPolicy != ResolutionPolicy::UNKNOWN)
+    if (width && height && _resolutionPolicy != ResolutionPolicy::UNKNOWN)
     {
-        updateDesignResolutionSize();
+        Size baseDesignSize = _designResolutionSize;
+        ResolutionPolicy baseResolutionPolicy = _resolutionPolicy;
+
+        int frameWidth = width / _frameZoomFactor;
+        int frameHeight = height / _frameZoomFactor;
+        setFrameSize(frameWidth, frameHeight);
+        setDesignResolutionSize(baseDesignSize.width, baseDesignSize.height, baseResolutionPolicy);
         Director::getInstance()->setViewport();
     }
 }
 
 void GLViewImpl::onGLFWWindowIconifyCallback(GLFWwindow* window, int iconified)
-{
+{	
     if (iconified == GL_TRUE)
     {
-        Application::getInstance()->applicationDidEnterBackground();
+		Application::getInstance()->applicationDidEnterBackground();
     }
     else
     {
-        Application::getInstance()->applicationWillEnterForeground();
+		Application::getInstance()->applicationWillEnterForeground();
     }
 }
 

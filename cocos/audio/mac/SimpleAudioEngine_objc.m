@@ -22,7 +22,7 @@
  $Id$
  */
 
-#import "SimpleAudioEngine_objc.h"
+#import "audio/mac/SimpleAudioEngine_objc.h"
 
 @implementation SimpleAudioEngine
 
@@ -236,53 +236,5 @@ static CDBufferManager *bufferManager = nil;
         return nil;
     }    
 }    
-
--(void) setEffect:(ALuint)soundId volume:(float)volume
-{
-    if(soundId != kCDNoBuffer)
-    {
-        [am.soundEngine setSound:soundId volume:volume];
-    }
-}
-
--(void) setEffect:(ALuint)soundId pitch:(float)pitch
-{
-    if(soundId != kCDNoBuffer)
-    {
-        [am.soundEngine setSound:soundId pitch:pitch];
-    }
-}
-
--(void) setEffect:(ALuint)soundId pan:(float)pan
-{
-    if(soundId != kCDNoBuffer)
-    {
-        [am.soundEngine setSound:soundId pan:pan];
-    }
-}
-
--(void) getEffectVolume:(ALuint)soundId
-{
-    if(soundId != kCDNoBuffer)
-    {
-        [am.soundEngine getSoundVolume:soundId];
-    }
-}
-
--(void) getEffectPitch:(ALuint)soundId
-{
-    if(soundId != kCDNoBuffer)
-    {
-        [am.soundEngine getSoundPitch:soundId];
-    }
-}
-
--(void) getEffectPan:(ALuint)soundId
-{
-    if(soundId != kCDNoBuffer)
-    {
-        [am.soundEngine getSoundPan:soundId];
-    }
-}
 
 @end 
