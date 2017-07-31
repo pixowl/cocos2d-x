@@ -275,6 +275,21 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
     {
         textRenderer = Label::createWithSystemFont(text, fontName, fontSize);
     }
+    
+    if(text.find('\n') != std::string::npos)
+    {
+        std::string curText = text;
+        size_t leftLength = text.find('\n');
+        std::string leftWords = Helper::getSubStringOfUTF8String(curText, 0, leftLength);
+        size_t stringLength = StringUtils::getCharacterCountInUTF8String(text);
+        std::string cutWords = Helper::getSubStringOfUTF8String(curText, leftLength+1, stringLength - leftLength);
+        
+        handleTextRenderer(leftWords.substr(0, leftLength), fontName, fontSize, color, opacity);
+        addNewLine();
+        handleTextRenderer(cutWords, fontName, fontSize, color, opacity);
+        return;
+    }
+    
     float textRendererWidth = textRenderer->getContentSize().width;
     _leftSpaceWidth -= textRendererWidth;
     if (_leftSpaceWidth < 0.0f)
@@ -298,6 +313,7 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
             }
             if (leftRenderer)
             {
+                leftRenderer->setVerticalAlignment(TextVAlignment::CENTER);
                 leftRenderer->setColor(color);
                 leftRenderer->setOpacity(opacity);
                 pushToContainer(leftRenderer);
@@ -309,6 +325,7 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
     }
     else
     {
+        textRenderer->setVerticalAlignment(TextVAlignment::CENTER);
         textRenderer->setColor(color);
         textRenderer->setOpacity(opacity);
         pushToContainer(textRenderer);
