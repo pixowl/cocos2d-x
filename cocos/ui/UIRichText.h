@@ -313,6 +313,8 @@ public:
      * It's usually called internally.
      */
     void formatText();
+    
+    void setFormatDirty(bool dirty) { _formatTextDirty = dirty; }
 
     //override functions.
     virtual void setAnchorPoint(const Vec2 &pt) override;

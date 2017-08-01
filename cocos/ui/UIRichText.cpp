@@ -417,7 +417,7 @@ void RichText::formarRenderers()
                 nextPosX += l->getContentSize().width;
             }
         }
-        _elementRenderersContainer->setContentSize(_contentSize);
+        _elementRenderersContainer->setContentSize({_contentSize.width, newContentSizeHeight});        
         delete [] maxHeights;
     }
     
