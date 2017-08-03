@@ -396,24 +396,31 @@ void RichText::formarRenderers()
     else
     {
         float newContentSizeHeight = 0.0f;
+        float newContentSizeWidth = 0.0f;
         float *maxHeights = new float[_elementRenders.size()];
         
         for (size_t i=0; i<_elementRenders.size(); i++)
         {
             Vector<Node*>* row = (_elementRenders[i]);
             float maxHeight = 0.0f;
+            float rowWidth = 0.0f;
             for (ssize_t j=0; j<row->size(); j++)
             {
                 Node* l = row->at(j);
+                auto width = l->getContentSize().width;
                 auto height = l->getContentSize().height;
                 if (dynamic_cast<Label*>(l))
+                {
+                    width *= l->getScaleX();
                     height *= l->getScaleY();
+                }
+                rowWidth += width;
                 maxHeight = MAX(height, maxHeight);
             }
             maxHeights[i] = maxHeight;
             newContentSizeHeight += maxHeights[i];
+            newContentSizeWidth = MAX(rowWidth, newContentSizeWidth);
         }
-        
         
         float nextPosY = _customSize.height;
         for (size_t i=0; i<_elementRenders.size(); i++)
@@ -434,7 +441,7 @@ void RichText::formarRenderers()
                 nextPosX += width;
             }
         }
-        _elementRenderersContainer->setContentSize({_contentSize.width, newContentSizeHeight});
+        _elementRenderersContainer->setContentSize({newContentSizeWidth, newContentSizeHeight});
         delete [] maxHeights;
     }
     
