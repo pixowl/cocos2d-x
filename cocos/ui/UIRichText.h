@@ -118,7 +118,7 @@ public:
      * @param fontSize Content font size.
      * @return True if initialize scucess, false otherwise.
      */
-    bool init(int tag, const Color3B& color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize);
+    bool init(int tag, const Color3B& color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize, const Vec2& scale={1.0f, 1.0f});
 
     
     /**
@@ -132,11 +132,12 @@ public:
      * @param fontSize Content font size.
      * @return RichElementText instance.
      */
-    static RichElementText* create(int tag, const Color3B& color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize);
+    static RichElementText* create(int tag, const Color3B& color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize, const Vec2& scale={1.0f, 1.0f});
 protected:
     std::string _text;
     std::string _fontName;
     float _fontSize;
+    Vec2 _scale;
     friend class RichText;
     
 };
@@ -330,7 +331,7 @@ protected:
 
     virtual void initRenderer() override;
     void pushToContainer(Node* renderer);
-    void handleTextRenderer(const std::string& text, const std::string& fontName, float fontSize, const Color3B& color, GLubyte opacity);
+    void handleTextRenderer(const std::string& text, const std::string& fontName, float fontSize, const Color3B& color, GLubyte opacity, const Vec2& scale);
     void handleImageRenderer(const std::string& fileParh, const Color3B& color, GLubyte opacity);
     void handleCustomRenderer(Node* renderer);
     void formarRenderers();

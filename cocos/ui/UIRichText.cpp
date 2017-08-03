@@ -43,10 +43,10 @@ bool RichElement::init(int tag, const Color3B &color, GLubyte opacity)
 }
     
     
-RichElementText* RichElementText::create(int tag, const Color3B &color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize)
+RichElementText* RichElementText::create(int tag, const Color3B &color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize, const Vec2& scale)
 {
     RichElementText* element = new (std::nothrow) RichElementText();
-    if (element && element->init(tag, color, opacity, text, fontName, fontSize))
+    if (element && element->init(tag, color, opacity, text, fontName, fontSize, scale))
     {
         element->autorelease();
         return element;
@@ -55,13 +55,14 @@ RichElementText* RichElementText::create(int tag, const Color3B &color, GLubyte 
     return nullptr;
 }
     
-bool RichElementText::init(int tag, const Color3B &color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize)
+bool RichElementText::init(int tag, const Color3B &color, GLubyte opacity, const std::string& text, const std::string& fontName, float fontSize, const Vec2& scale)
 {
     if (RichElement::init(tag, color, opacity))
     {
         _text = text;
         _fontName = fontName;
         _fontSize = fontSize;
+        _scale = scale;
         return true;
     }
     return false;
@@ -204,6 +205,7 @@ void RichText::formatText()
                         {
                             elementRenderer = Label::createWithSystemFont(elmtText->_text.c_str(), elmtText->_fontName, elmtText->_fontSize);
                         }
+                        elementRenderer->setScale(elmtText->_scale.x, elmtText->_scale.y);
                         break;
                     }
                     case RichElement::Type::IMAGE:
@@ -238,7 +240,7 @@ void RichText::formatText()
                     case RichElement::Type::TEXT:
                     {
                         RichElementText* elmtText = static_cast<RichElementText*>(element);
-                        handleTextRenderer(elmtText->_text.c_str(), elmtText->_fontName.c_str(), elmtText->_fontSize, elmtText->_color, elmtText->_opacity);
+                        handleTextRenderer(elmtText->_text.c_str(), elmtText->_fontName.c_str(), elmtText->_fontSize, elmtText->_color, elmtText->_opacity, elmtText->_scale);
                         break;
                     }
                     case RichElement::Type::IMAGE:
@@ -263,8 +265,9 @@ void RichText::formatText()
     }
 }
     
-void RichText::handleTextRenderer(const std::string& text, const std::string& fontName, float fontSize, const Color3B &color, GLubyte opacity)
+void RichText::handleTextRenderer(const std::string& text, const std::string& fontName, float fontSize, const Color3B &color, GLubyte opacity, const Vec2& scale)
 {
+    auto fontScale = scale;
     auto fileExist = FileUtils::getInstance()->isFileExist(fontName);
     Label* textRenderer = nullptr;
     if (fileExist)
@@ -275,6 +278,8 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
     {
         textRenderer = Label::createWithSystemFont(text, fontName, fontSize);
     }
+    textRenderer->setScaleX(fontScale.x);
+    textRenderer->setScaleY(fontScale.y);
     
     if(text.find('\n') != std::string::npos)
     {
@@ -284,13 +289,13 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
         size_t stringLength = StringUtils::getCharacterCountInUTF8String(text);
         std::string cutWords = Helper::getSubStringOfUTF8String(curText, leftLength+1, stringLength - leftLength);
         
-        handleTextRenderer(leftWords.substr(0, leftLength), fontName, fontSize, color, opacity);
+        handleTextRenderer(leftWords.substr(0, leftLength), fontName, fontSize, color, opacity, scale);
         addNewLine();
-        handleTextRenderer(cutWords, fontName, fontSize, color, opacity);
+        handleTextRenderer(cutWords, fontName, fontSize, color, opacity, scale);
         return;
     }
     
-    float textRendererWidth = textRenderer->getContentSize().width;
+    float textRendererWidth = textRenderer->getContentSize().width * fontScale.x;
     _leftSpaceWidth -= textRendererWidth;
     if (_leftSpaceWidth < 0.0f)
     {
@@ -313,6 +318,9 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
             }
             if (leftRenderer)
             {
+                leftRenderer->setScaleX(fontScale.x);
+                leftRenderer->setScaleY(fontScale.y);
+                
                 leftRenderer->setVerticalAlignment(TextVAlignment::CENTER);
                 leftRenderer->setColor(color);
                 leftRenderer->setOpacity(opacity);
@@ -321,10 +329,13 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
         }
 
         addNewLine();
-        handleTextRenderer(cutWords.c_str(), fontName, fontSize, color, opacity);
+        handleTextRenderer(cutWords.c_str(), fontName, fontSize, color, opacity, scale);
     }
     else
     {
+        textRenderer->setScaleX(fontScale.x);
+        textRenderer->setScaleY(fontScale.y);
+        
         textRenderer->setVerticalAlignment(TextVAlignment::CENTER);
         textRenderer->setColor(color);
         textRenderer->setOpacity(opacity);
@@ -394,7 +405,10 @@ void RichText::formarRenderers()
             for (ssize_t j=0; j<row->size(); j++)
             {
                 Node* l = row->at(j);
-                maxHeight = MAX(l->getContentSize().height, maxHeight);
+                auto height = l->getContentSize().height;
+                if (dynamic_cast<Label*>(l))
+                    height *= l->getScaleY();
+                maxHeight = MAX(height, maxHeight);
             }
             maxHeights[i] = maxHeight;
             newContentSizeHeight += maxHeights[i];
@@ -414,10 +428,13 @@ void RichText::formarRenderers()
                 l->setAnchorPoint(Vec2::ZERO);
                 l->setPosition(nextPosX, nextPosY);
                 _elementRenderersContainer->addChild(l, 1);
-                nextPosX += l->getContentSize().width;
+                auto width = l->getContentSize().width;
+                if (dynamic_cast<Label*>(l))
+                    width *= l->getScaleX();
+                nextPosX += width;
             }
         }
-        _elementRenderersContainer->setContentSize({_contentSize.width, newContentSizeHeight});        
+        _elementRenderersContainer->setContentSize({_contentSize.width, newContentSizeHeight});
         delete [] maxHeights;
     }
     
