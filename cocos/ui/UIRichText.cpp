@@ -303,6 +303,9 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
         std::string curText = text;
         size_t stringLength = StringUtils::getCharacterCountInUTF8String(text);
         int leftLength = stringLength * (1.0f - overstepPercent);
+        auto lastSpace = curText.rfind(' ', leftLength);
+        if (lastSpace != std::string::npos)
+            leftLength = lastSpace + 1;
         std::string leftWords = Helper::getSubStringOfUTF8String(curText,0,leftLength);
         std::string cutWords = Helper::getSubStringOfUTF8String(curText, leftLength, stringLength - leftLength);
         if (leftLength > 0)
