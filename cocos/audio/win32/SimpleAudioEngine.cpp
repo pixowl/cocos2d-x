@@ -277,6 +277,37 @@ void SimpleAudioEngine::setEffectsVolume(float volume)
 {
 }
 
+// PIXOWL's EXTENSION
+void SimpleAudioEngine::setEffectVolume(unsigned int soundId, float volume)
+{
+
+}
+void SimpleAudioEngine::setEffectPitch(unsigned int soundId, float pitch)
+{
+
+}
+
+void SimpleAudioEngine::setEffectPan(unsigned int soundId, float pan)
+{
+
+}
+
+float SimpleAudioEngine::getEffectVolume(unsigned int soundId)
+{
+	return 1.0;
+}
+
+float SimpleAudioEngine::getEffectPitch(unsigned int soundId)
+{
+	return 1.0;
+}
+
+float SimpleAudioEngine::getEffectPan(unsigned int soundId)
+{
+	return 1.0;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // static function
 //////////////////////////////////////////////////////////////////////////
