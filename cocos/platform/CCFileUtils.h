@@ -531,4 +531,8 @@ protected:
 
 NS_CC_END
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+static int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf);
+#endif
+
 #endif    // __CC_FILEUTILS_H__
