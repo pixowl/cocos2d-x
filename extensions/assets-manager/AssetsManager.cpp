@@ -36,6 +36,10 @@
 #include <dirent.h>
 #endif
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+#include <ftw.h>
+#endif
+
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
 #include "base/CCUserDefault.h"
@@ -678,11 +682,13 @@ void AssetsManager::destroyStoragePath()
     // Path may include space.
     command += "\"" + _storagePath + "\"";
     system(command.c_str());
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    nftw(_storagePath.c_str(),unlink_cb, 64, FTW_DEPTH | FTW_PHYS);
 #else
     string command = "rm -r ";
     // Path may include space.
     command += "\"" + _storagePath + "\"";
-    system(command.c_str());    
+    system(command.c_str());
 #endif
 }
 
