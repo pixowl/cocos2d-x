@@ -45,7 +45,7 @@ LOCAL_WHOLE_STATIC_LIBRARIES += cocos_png_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_jpeg_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_tiff_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_webp_static
-LOCAL_WHOLE_STATIC_LIBRARIES += cocos_chipmunk_static
+LOCAL_WHOLE_STATIC_LIBRARIES += ext_chipmunk
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_zlib_static
 LOCAL_WHOLE_STATIC_LIBRARIES += recast_static
 
@@ -78,14 +78,14 @@ LOCAL_WHOLE_STATIC_LIBRARIES += bullet_static
 
 include $(PREBUILT_STATIC_LIBRARY)
 #==============================================================
-$(call import-module,freetype2/prebuilt/android)
+$(call import-module, freetype2/prebuilt/android)
 $(call import-module, platform/android/prebuilt-mk)
-$(call import-module,png/prebuilt/android)
-$(call import-module,zlib/prebuilt/android)
-$(call import-module,jpeg/prebuilt/android)
-$(call import-module,tiff/prebuilt/android)
-$(call import-module,webp/prebuilt/android)
-$(call import-module,chipmunk/prebuilt/android)
+$(call import-module, png/prebuilt/android)
+$(call import-module, zlib/prebuilt/android)
+$(call import-module, jpeg/prebuilt/android)
+$(call import-module, tiff/prebuilt/android)
+$(call import-module, webp/prebuilt/android)
+$(call import-module, chipmunk/prebuilt/android)
 $(call import-module, 3d/prebuilt-mk)
 $(call import-module, audio/android/prebuilt-mk)
 $(call import-module, editor-support/cocosbuilder/prebuilt-mk)
@@ -97,6 +97,7 @@ $(call import-module, extensions/prebuilt-mk)
 $(call import-module, Box2D/prebuilt-mk)
 $(call import-module, bullet/prebuilt-mk)
 $(call import-module, recast/prebuilt-mk)
-$(call import-module,curl/prebuilt/android)
-$(call import-module,websockets/prebuilt/android)
+$(call import-module, curl/prebuilt/android)
+$(call import-module, websockets/prebuilt/android)
+$(call import-module, uv/prebuilt/android)
 $(call import-module, flatbuffers/prebuilt-mk)
