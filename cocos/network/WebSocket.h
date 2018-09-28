@@ -35,10 +35,11 @@
 
 #include "platform/CCPlatformMacros.h"
 #include "platform/CCStdC.h"
+#include "libwebsockets.h"
 
 struct libwebsocket;
-struct libwebsocket_context;
-struct libwebsocket_protocols;
+struct lws_context;
+struct lws_protocols;
 
 /**
  * @addtogroup network
@@ -140,7 +141,7 @@ public:
          * 1. client connection is failed.
          * 2. the request client connection has been unable to complete a handshake with the remote server.
          * 3. the protocol won't get used at all after this callback and current _readyState is State::CONNECTING.
-         * 4. when a socket descriptor needs to be removed from an external polling array. in is again the struct libwebsocket_pollargs containing the fd member to be removed. If you are using the internal polling loop, you can just ignore it and current _readyState is State::CONNECTING.
+         * 4. when a socket descriptor needs to be removed from an external polling array. in is again the struct lws_pollargs containing the fd member to be removed. If you are using the internal polling loop, you can just ignore it and current _readyState is State::CONNECTING.
          *
          * @param ws The WebSocket object connected.
          * @param error WebSocket::ErrorCode enum,would be ErrorCode::TIME_OUT or ErrorCode::CONNECTION_FAILURE.
@@ -197,8 +198,9 @@ private:
 
 
     friend class WebSocketCallbackWrapper;
-    int onSocketCallback(struct libwebsocket_context *ctx,
-                         struct libwebsocket *wsi,
+
+    int onSocketCallback(
+                         lws *ctx,
                          int reason,
                          void *user, void *in, ssize_t len);
 
@@ -215,11 +217,11 @@ private:
     friend class WsThreadHelper;
     WsThreadHelper* _wsHelper;
 
-    struct libwebsocket*         _wsInstance;
-    struct libwebsocket_context* _wsContext;
+    struct lws*         _wsInstance;
+    struct lws_context* _wsContext;
     Delegate* _delegate;
     int _SSLConnection;
-    struct libwebsocket_protocols* _wsProtocols;
+    struct lws_protocols* _wsProtocols;
 };
 
 }
