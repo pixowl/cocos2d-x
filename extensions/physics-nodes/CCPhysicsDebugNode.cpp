@@ -49,11 +49,11 @@ NS_CC_EXT_BEGIN
 
 static Color4F ColorForBody(cpBody *body)
 {
-    if (CP_BODY_TYPE_STATIC == cpBodyGetType(body) || cpBodyIsSleeping(body))
+	if (cpBodyIsRogue(body) || cpBodyIsSleeping(body))
     {
         return Color4F(0.5f, 0.5f, 0.5f ,0.5f);
     }
-    else if (body->sleeping.idleTime > cpBodyGetSpace(body)->sleepTimeThreshold)
+    else if (body->CP_PRIVATE(node).idleTime > body->CP_PRIVATE(space)->sleepTimeThreshold)
     {
         return Color4F(0.33f, 0.33f, 0.33f, 0.5f);
     }
