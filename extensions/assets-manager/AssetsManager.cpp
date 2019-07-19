@@ -23,8 +23,8 @@
  ****************************************************************************/
 #include "AssetsManager.h"
 
-#include <curl/curl.h>
-#include <curl/easy.h>
+#include <curl.h>
+#include <easy.h>
 #include <stdio.h>
 #include <vector>
 #include <thread>

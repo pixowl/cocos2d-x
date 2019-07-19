@@ -472,9 +472,6 @@ int WebSocket::onSocketCallback(
                      int reason,
                      void *user, void *in, ssize_t len)
 {
-	
-    CCASSERT(_wsContext == nullptr || ctx == _wsContext, "Invalid context.");
-   
 	switch (reason)
     {
         case LWS_CALLBACK_DEL_POLL_FD:
