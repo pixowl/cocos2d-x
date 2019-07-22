@@ -23,8 +23,15 @@
  ****************************************************************************/
 #include "AssetsManager.h"
 
-#include <curl.h>
-#include <easy.h>
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#   include <curl/curl.h>
+#   include <curl/easy.h>
+#else// CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#   include <curl.h>
+#   include <easy.h>
+#endif// CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+
+
 #include <stdio.h>
 #include <vector>
 #include <thread>
