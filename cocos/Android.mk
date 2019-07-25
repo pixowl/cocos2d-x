@@ -235,7 +235,8 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/../external \
                     $(LOCAL_PATH)/../external/tinyxml2 \
                     $(LOCAL_PATH)/../external/unzip \
-                    $(LOCAL_PATH)/../external/chipmunk/include/chipmunk \
+                    $(LOCAL_PATH)/../external/chipmunk-new/include/chipmunk \
+                    $(LOCAL_PATH)/../external/chipmunk-new/include/chipmunk/constraints \
                     $(LOCAL_PATH)/../external/xxhash \
                     $(LOCAL_PATH)/../external/nslog \
                     $(LOCAL_PATH)/../external/poly2tri \
@@ -248,7 +249,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/../external \
                     $(LOCAL_PATH)/../external/tinyxml2 \
                     $(LOCAL_PATH)/../external/unzip \
-                    $(LOCAL_PATH)/../external/chipmunk/include/chipmunk \
+                    $(LOCAL_PATH)/../external/chipmunk-new/include/chipmunk \
                     $(LOCAL_PATH)/../external/edtaa3func \
                     $(LOCAL_PATH)/../external/xxhash \
                     $(LOCAL_PATH)/../external/ConvertUTF \
@@ -306,7 +307,7 @@ $(call import-module,zlib/prebuilt/android)
 $(call import-module,jpeg/prebuilt/android)
 $(call import-module,tiff/prebuilt/android)
 $(call import-module,webp/prebuilt/android)
-$(call import-module,chipmunk/prebuilt/android)
+$(call import-module,chipmunk-new)
 $(call import-module,3d)
 $(call import-module,audio/android)
 $(call import-module,editor-support/cocosbuilder)

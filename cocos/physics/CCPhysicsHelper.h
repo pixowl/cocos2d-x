@@ -28,7 +28,12 @@
 #include "base/ccConfig.h"
 #if CC_USE_PHYSICS
 
-#include "chipmunk.h"
+#if USE_CHIPMUNK
+#   include "chipmunk.h"
+#else// USE_CHIPMUNK
+//#   define cpArbiter void
+#endif// USE_CHIPMUNK
+
 #include "platform/CCPlatformMacros.h"
 #include "math/CCGeometry.h"
 

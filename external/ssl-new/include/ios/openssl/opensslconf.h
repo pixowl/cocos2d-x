@@ -121,8 +121,8 @@ extern "C" {
 
 #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
 #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
-#define ENGINESDIR "/Users/lucas/Dev/tools/cocos2d-x-3rd-party-libs-src/contrib/install-ios/x86_64/lib/engines"
-#define OPENSSLDIR "/Users/lucas/Dev/tools/cocos2d-x-3rd-party-libs-src/contrib/install-ios/x86_64/ssl"
+#define ENGINESDIR "/Users/alejandro/Documents/cocos2d-x-3rd-party-libs-src/contrib/install-ios/x86_64/lib/engines"
+#define OPENSSLDIR "/Users/alejandro/Documents/cocos2d-x-3rd-party-libs-src/contrib/install-ios/x86_64/ssl"
 #endif
 #endif
 

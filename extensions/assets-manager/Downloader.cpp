@@ -24,8 +24,13 @@
 
 #include "Downloader.h"
 #include "cocos2d.h"
-#include <curl/curl.h>
-#include <curl/easy.h>
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#   include <curl/curl.h>
+#   include <curl/easy.h>
+#else// CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#   include <curl.h>
+#   include <easy.h>
+#endif// CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #include <cstdio>
 #include <cerrno>
 
@@ -193,6 +198,7 @@ void Downloader::notifyError(ErrorCode code, const std::string &msg/* ="" */, co
 
 void Downloader::notifyError(const std::string &msg, int curlm_code, const std::string &customId/* = ""*/)
 {
+    
     notifyError(ErrorCode::CURL_MULTI_ERROR, msg, customId, CURLE_OK, curlm_code);
 }
 

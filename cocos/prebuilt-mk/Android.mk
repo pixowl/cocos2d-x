@@ -27,7 +27,7 @@ $(LOCAL_PATH)/../base \
 $(LOCAL_PATH)/../../external \
 $(LOCAL_PATH)/../../external/tinyxml2 \
 $(LOCAL_PATH)/../../external/unzip \
-$(LOCAL_PATH)/../../external/chipmunk/include/chipmunk \
+$(LOCAL_PATH)/../../external/chipmunk-new/include/chipmunk \
 $(LOCAL_PATH)/../../external/xxhash \
 $(LOCAL_PATH)/../../external/nslog \
 $(LOCAL_PATH)/../../external/poly2tri \
@@ -85,7 +85,7 @@ $(call import-module,zlib/prebuilt/android)
 $(call import-module,jpeg/prebuilt/android)
 $(call import-module,tiff/prebuilt/android)
 $(call import-module,webp/prebuilt/android)
-$(call import-module,chipmunk/prebuilt/android)
+$(call import-module,chipmunk-new/prebuilt/android)
 $(call import-module, 3d/prebuilt-mk)
 $(call import-module, audio/android/prebuilt-mk)
 $(call import-module, editor-support/cocosbuilder/prebuilt-mk)

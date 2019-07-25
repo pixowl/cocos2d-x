@@ -51,16 +51,16 @@ static Color4F ColorForBody(cpBody *body)
 {
 	if (cpBodyIsRogue(body) || cpBodyIsSleeping(body))
     {
-		return Color4F(0.5f, 0.5f, 0.5f ,0.5f);
-	}
+        return Color4F(0.5f, 0.5f, 0.5f ,0.5f);
+    }
     else if (body->CP_PRIVATE(node).idleTime > body->CP_PRIVATE(space)->sleepTimeThreshold)
     {
-		return Color4F(0.33f, 0.33f, 0.33f, 0.5f);
-	}
+        return Color4F(0.33f, 0.33f, 0.33f, 0.5f);
+    }
     else
     {
-		return Color4F(1.0f, 0.0f, 0.0f, 0.5f);
-	}
+        return Color4F(1.0f, 0.0f, 0.0f, 0.5f);
+    }
 }
 
 static Vec2 cpVert2Point(const cpVect &vert)

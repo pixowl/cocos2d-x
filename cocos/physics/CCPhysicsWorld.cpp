@@ -26,8 +26,14 @@
 #if CC_USE_PHYSICS
 #include <algorithm>
 #include <climits>
+#if USE_CHIPMUNK
+#   include "chipmunk.h"
 
-#include "chipmunk.h"
+
+#else// USE_CHIPMUNK
+#   define cpArbiter void
+#endif// USE_CHIPMUNK
+
 #include "CCPhysicsBody.h"
 #include "CCPhysicsShape.h"
 #include "CCPhysicsContact.h"
