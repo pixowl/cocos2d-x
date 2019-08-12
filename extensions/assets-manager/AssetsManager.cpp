@@ -23,8 +23,14 @@
  ****************************************************************************/
 #include "AssetsManager.h"
 
-#include <curl.h>
-#include <easy.h>
+#if __ANDROID__
+#   include <curl/curl.h>
+#   include <curl/easy.h>
+#else//__ANDROID__
+#   include <curl.h>
+#   include <easy.h>
+#endif//__ANDROID__
+
 #include <stdio.h>
 #include <vector>
 #include <thread>
